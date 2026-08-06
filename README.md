@@ -100,10 +100,10 @@ This runs the React app on `http://localhost:3000`.
 
 ### Legacy sorter backend used by the upload flow
 
-From the repository root:
+From the `backend/` directory:
 
 ```bash
-uvicorn main:app --reload --port 8001 --app-dir backend
+uvicorn main:app --reload --port 8001
 ```
 
 This is the backend the current upload page expects at `http://127.0.0.1:8001`.
