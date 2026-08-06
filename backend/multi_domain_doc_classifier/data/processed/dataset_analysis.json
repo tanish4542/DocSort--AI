@@ -1,0 +1,42 @@
+[
+  {
+    "name": "finance",
+    "rows": 4000,
+    "missing_text": 0,
+    "dup_text": 0,
+    "short_docs": 0,
+    "label_counts": {
+      "Finance": 4000
+    }
+  },
+  {
+    "name": "medical_aggregated",
+    "rows": 12000,
+    "missing_text": 0,
+    "dup_text": 0,
+    "short_docs": 0,
+    "label_counts": {
+      "Medical": 12000
+    }
+  },
+  {
+    "name": "technology_numbers",
+    "rows": 203,
+    "missing_text": 0,
+    "dup_text": 0,
+    "short_docs": 0,
+    "label_counts": {
+      "Technology": 203
+    }
+  },
+  {
+    "name": "sports_numbers",
+    "rows": 443,
+    "missing_text": 0,
+    "dup_text": 0,
+    "short_docs": 0,
+    "label_counts": {
+      "Sports": 443
+    }
+  }
+]

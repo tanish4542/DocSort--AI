@@ -1,0 +1,28 @@
+{
+  "before_counts": {
+    "Medical": 9600,
+    "Finance": 3200,
+    "Sports": 353,
+    "Technology": 159
+  },
+  "after_cap_counts": {
+    "Medical": 8000,
+    "Finance": 3200,
+    "Sports": 353,
+    "Technology": 159
+  },
+  "strategy": {
+    "Medical": 8000,
+    "Finance": 8000,
+    "Sports": 8000,
+    "Technology": 8000
+  },
+  "final_counts": {
+    "Medical": 8000,
+    "Finance": 8000,
+    "Sports": 8000,
+    "Technology": 8000
+  },
+  "method": "undersample_cap_then_random_oversample",
+  "rationale": "Finance/Medical dominate raw counts; Tech/Sports are tiny. Capping majority limits duplicated mass-market n-grams; oversampling minorities prevents NB class priors from washing out Technology/Sports signals."
+}
