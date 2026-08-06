@@ -1,70 +1,154 @@
-# Getting Started with Create React App
+# DocSort-AI
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+DocSort-AI is a document classification and auto-sorting app. It accepts PDF, DOCX, and TXT files, predicts a document domain with a TF-IDF + Naive Bayes pipeline, and returns confidence, keywords, and storage metadata in a React dashboard.
 
-## Available Scripts
+## What It Does
 
-In the project directory, you can run:
+- Upload one or more documents from the browser.
+- Classify each document into a domain.
+- Show the prediction, confidence, TF-IDF terms, and manual keyword evidence.
+- Sort files into local folders on disk.
+- Keep recent predictions in browser storage.
 
-### `npm start`
+## Repository Layout
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- `src/` - React frontend used for the main UI.
+- `public/` - Static frontend assets.
+- `backend/multi_domain_doc_classifier/` - Core classifier package, training code, data artifacts, and a Streamlit demo.
+- `backend/main.py` - Legacy FastAPI sorter API used by the current React workflow.
+- `sorted_documents/` - Example output folders.
+- `build/` - Production frontend build output.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Frontend
 
-### `npm test`
+The React app includes:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- A landing page with feature highlights and an explanation of the ML pipeline.
+- An upload page with drag-and-drop support for PDF, DOCX, and TXT files.
+- A results page that displays prediction confidence, extracted keywords, and stored file metadata.
+- Local history for recent uploads and predictions.
 
-### `npm run build`
+The frontend uses React Router and stores recent state in `sessionStorage` and `localStorage`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Backend
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+There are two FastAPI entry points in the repository:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- `backend/multi_domain_doc_classifier/api/main.py` exposes the current classifier API:
+	- `GET /health`
+	- `POST /predict_text`
+	- `POST /predict_file`
+- `backend/main.py` exposes the legacy auto-sorting API used by the current React workflow:
+	- `POST /predict`
+	- `POST /predict-bulk`
+	- `POST /confirm-sort`
 
-### `npm run eject`
+The legacy sorter writes files under `~/Desktop/SortedDocuments` and supports manual confirmation when the confidence is not exact.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Model Pipeline
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The classifier package uses:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- format-aware text extraction for PDF, DOCX, and TXT
+- text cleaning and stopword removal
+- TF-IDF vectorization
+- curated keyword matching per domain
+- Multinomial Naive Bayes classification
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+The training script saves the model and vectorizer artifacts to `backend/multi_domain_doc_classifier/models/`.
 
-## Learn More
+## Supported Domains
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- Finance
+- Medical
+- Sports
+- Technology
+- Education is present in the legacy sorter API and frontend UI, but the current classifier package is configured for the four-domain model above.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Requirements
 
-### Code Splitting
+- Node.js 18+ and npm
+- Python 3.10+ recommended
+- A working internet connection the first time NLTK downloads its stopword corpus
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Setup
 
-### Analyzing the Bundle Size
+### 1. Install frontend dependencies
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+```bash
+npm install
+```
 
-### Making a Progressive Web App
+### 2. Install backend dependencies
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```bash
+cd backend/multi_domain_doc_classifier
+pip install -r requirements.txt
+```
 
-### Advanced Configuration
+## Running the App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Frontend
 
-### Deployment
+From the repository root:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+npm start
+```
 
-### `npm run build` fails to minify
+This runs the React app on `http://localhost:3000`.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+### Legacy sorter backend used by the upload flow
+
+From the repository root:
+
+```bash
+uvicorn main:app --reload --port 8001 --app-dir backend
+```
+
+This is the backend the current upload page expects at `http://127.0.0.1:8001`.
+
+### Current classifier API
+
+From `backend/multi_domain_doc_classifier/api`:
+
+```bash
+uvicorn main:app --reload --app-dir ..
+```
+
+This exposes `/health`, `/predict_text`, and `/predict_file`.
+
+### Streamlit demo
+
+From `backend/multi_domain_doc_classifier`:
+
+```bash
+streamlit run streamlit_app.py
+```
+
+## Training the Model
+
+The training script lives at `backend/multi_domain_doc_classifier/scripts/train.py`.
+
+```bash
+cd backend/multi_domain_doc_classifier/scripts
+python train.py
+```
+
+Use `--quick` for a smaller development run.
+
+## Notes
+
+- The frontend currently posts uploads to `POST /predict-bulk` and confirmation data to `POST /confirm-sort`.
+- The newer FastAPI service in `backend/multi_domain_doc_classifier/api/main.py` is better for direct text or single-file classification, but it does not implement the legacy folder-sorting endpoints.
+- NLTK downloads the English stopword corpus at runtime in the legacy backend.
+
+## Troubleshooting
+
+- If the frontend cannot reach the backend, make sure the FastAPI server is running on port `8001`.
+- If you see missing NLTK data errors, rerun the backend once with internet access so the stopwords corpus can download.
+- If a file is rejected, verify that it is a `.pdf`, `.docx`, or `.txt` document.
+
+## License
+
+No explicit license file is present in the repository.
