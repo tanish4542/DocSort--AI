@@ -1,0 +1,296 @@
+[
+  {
+    "class": "Business and Finance",
+    "document_id": 2266,
+    "url": "https://www.dailymail.co.uk/money/markets/article-13562063/BUSINESS-LIVE-THG-sell-luxury-portfolio-Frasers-Prudential-preps-2bn-buyback-SIG-profit-warning.html?ns_mchannel=rss&ns_campaign=1490&ito=1490",
+    "decision_margin": 3.9458,
+    "top_supporting_features": [
+      [
+        "business",
+        0.1152
+      ],
+      [
+        "investors",
+        0.0871
+      ],
+      [
+        "inflation",
+        0.0659
+      ],
+      [
+        "market",
+        0.0589
+      ],
+      [
+        "trading",
+        0.0555
+      ],
+      [
+        "prices",
+        0.0548
+      ],
+      [
+        "economy",
+        0.0545
+      ],
+      [
+        "financial",
+        0.0536
+      ],
+      [
+        "company",
+        0.0528
+      ],
+      [
+        "stock",
+        0.0473
+      ]
+    ],
+    "text_excerpt": "LIVE BUSINESS LIVE :THG to sell luxury portfolio to Frasers; Prudential preps \u00a32bn buyback; SIG profit warning By Live Commentary Updated: 04:03 EDT, 24 June 2024 The FTSE 100 is up 0.1 per cent in early trading. Among the companies with reports and trading updates today are THG,..."
+  },
+  {
+    "class": "Entertainment",
+    "document_id": 1309,
+    "url": "https://www.forbes.com/sites/entertainment/article/japanese-movies/",
+    "decision_margin": 4.3315,
+    "top_supporting_features": [
+      [
+        "film",
+        0.1882
+      ],
+      [
+        "movie",
+        0.0952
+      ],
+      [
+        "films",
+        0.0897
+      ],
+      [
+        "the film",
+        0.0894
+      ],
+      [
+        "festival",
+        0.0597
+      ],
+      [
+        "tv",
+        0.0453
+      ],
+      [
+        "comedy",
+        0.0452
+      ],
+      [
+        "movies",
+        0.0393
+      ],
+      [
+        "streaming",
+        0.0369
+      ],
+      [
+        "horror",
+        0.0357
+      ]
+    ],
+    "text_excerpt": "Scene from the movie \"Harakiri,\" directed by Masaki Kobayashi ullstein bild via Getty Images The past few years have been great for Japanese films. Excellent films like Godzilla Minus One, Suzume and Perfect Days have reignited interest abroad in the Japanese film industry. Japan..."
+  },
+  {
+    "class": "Medical Health",
+    "document_id": 2454,
+    "url": "https://www.everydayhealth.com/pneumonia/guide/",
+    "decision_margin": 3.8528,
+    "top_supporting_features": [
+      [
+        "hospital",
+        0.1317
+      ],
+      [
+        "health",
+        0.1305
+      ],
+      [
+        "symptoms",
+        0.1178
+      ],
+      [
+        "doctor",
+        0.1011
+      ],
+      [
+        "treatment",
+        0.0969
+      ],
+      [
+        "disease",
+        0.0791
+      ],
+      [
+        "cancer",
+        0.0741
+      ],
+      [
+        "covid",
+        0.0611
+      ],
+      [
+        "infections",
+        0.055
+      ],
+      [
+        "doctors",
+        0.0526
+      ]
+    ],
+    "text_excerpt": "Your doctors will try to classify your type of pneumonia to help guide your treatment. Community-Acquired Pneumonia (CAP) This is the most common form of pneumonia. You can catch it in public places, such as at school or work. [ 10 ] You can also develop CAP after you get a viral..."
+  },
+  {
+    "class": "Science",
+    "document_id": 1538,
+    "url": "https://www.indiatimes.com/news/world/worlds-oldest-active-termite-mounds-are-34000-years-old-637081.html",
+    "decision_margin": 3.8448,
+    "top_supporting_features": [
+      [
+        "science",
+        0.1967
+      ],
+      [
+        "scientists",
+        0.1303
+      ],
+      [
+        "climate",
+        0.1129
+      ],
+      [
+        "climate change",
+        0.0794
+      ],
+      [
+        "carbon",
+        0.0786
+      ],
+      [
+        "discovered",
+        0.0756
+      ],
+      [
+        "earth",
+        0.0668
+      ],
+      [
+        "nuclear",
+        0.0639
+      ],
+      [
+        "discovery",
+        0.0625
+      ],
+      [
+        "000 years",
+        0.0571
+      ]
+    ],
+    "text_excerpt": "Scientists have discovered the world's oldest known active termite mounds , which have been occupied for tens of thousands of years. The termite mounds were discovered along the banks of the Buffels River in Namaqualand, a region along the west coast of South Africa. Termite moun..."
+  },
+  {
+    "class": "Sports",
+    "document_id": 3418,
+    "url": "https://www.dailymail.co.uk/wires/ap/article-13504987/Spain-eyes-record-Italy-seeks-redemption-Both-Group-B-Euro-2024-Croatia-Albania.html?ns_mchannel=rss&ns_campaign=1490&ito=1490",
+    "decision_margin": 3.4725,
+    "top_supporting_features": [
+      [
+        "coach",
+        0.1054
+      ],
+      [
+        "league",
+        0.0958
+      ],
+      [
+        "championship",
+        0.0788
+      ],
+      [
+        "match",
+        0.0758
+      ],
+      [
+        "euro 2024",
+        0.065
+      ],
+      [
+        "soccer",
+        0.061
+      ],
+      [
+        "team",
+        0.0589
+      ],
+      [
+        "cup",
+        0.0544
+      ],
+      [
+        "tournament",
+        0.0542
+      ],
+      [
+        "euro",
+        0.048
+      ]
+    ],
+    "text_excerpt": "Spain and defending champion Italy are the juggernauts but they can't underestimate the other two teams in Group B at the European Championship. Croatia has a good pedigree at international tournaments and has impressed at the last two World Cups - both of which Italy failed to q..."
+  },
+  {
+    "class": "Technology & Computing",
+    "document_id": 150,
+    "url": "https://www.forbes.com/sites/moorinsights/2024/06/13/apple-zips-through-os-improvements-to-launch-apple-intelligence/",
+    "decision_margin": 4.2373,
+    "top_supporting_features": [
+      [
+        "ai",
+        0.187
+      ],
+      [
+        "apple",
+        0.1087
+      ],
+      [
+        "users",
+        0.0888
+      ],
+      [
+        "intelligence",
+        0.0858
+      ],
+      [
+        "pro",
+        0.0643
+      ],
+      [
+        "app",
+        0.0521
+      ],
+      [
+        "device",
+        0.0505
+      ],
+      [
+        "iphone",
+        0.0487
+      ],
+      [
+        "mode",
+        0.0476
+      ],
+      [
+        "gaming",
+        0.0473
+      ]
+    ],
+    "text_excerpt": "Apple senior vice president Craig Federighi talks about Apple Intelligence at WWDC Apple Apple opened its annual WWDC keynote Monday with a bang, starting out with a whimsical skydiving entrance video. The keynote was once again pre-recorded, with Tim Cook standing on Apple Park\u2019..."
+  }
+]

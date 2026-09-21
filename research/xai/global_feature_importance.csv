@@ -1,0 +1,121 @@
+Class,Rank,Feature,Weight
+Business and Finance,1,business,3.00315
+Business and Finance,2,financial,2.02873
+Business and Finance,3,market,2.02251
+Business and Finance,4,company,1.90171
+Business and Finance,5,billion,1.80208
+Business and Finance,6,investors,1.77285
+Business and Finance,7,employees,1.72533
+Business and Finance,8,stock,1.55823
+Business and Finance,9,bank,1.53018
+Business and Finance,10,workers,1.49212
+Business and Finance,11,prices,1.47957
+Business and Finance,12,tax,1.42456
+Business and Finance,13,leaders,1.35575
+Business and Finance,14,trading,1.313
+Business and Finance,15,finance,1.29263
+Business and Finance,16,inflation,1.28234
+Business and Finance,17,reuters,1.28055
+Business and Finance,18,money,1.24366
+Business and Finance,19,ceo,1.23565
+Business and Finance,20,economy,1.21985
+Entertainment,1,film,3.21095
+Entertainment,2,music,2.87293
+Entertainment,3,show,2.68441
+Entertainment,4,movie,2.49973
+Entertainment,5,the show,2.30325
+Entertainment,6,entertainment,2.225
+Entertainment,7,album,1.78121
+Entertainment,8,tv,1.70385
+Entertainment,9,band,1.69208
+Entertainment,10,song,1.63302
+Entertainment,11,series,1.63274
+Entertainment,12,character,1.59653
+Entertainment,13,films,1.57703
+Entertainment,14,episode,1.57053
+Entertainment,15,festival,1.54434
+Entertainment,16,season,1.53663
+Entertainment,17,actor,1.50997
+Entertainment,18,singer,1.47594
+Entertainment,19,episodes,1.40006
+Entertainment,20,the film,1.39244
+Medical Health,1,health,3.60361
+Medical Health,2,medical,2.83298
+Medical Health,3,cancer,2.3026
+Medical Health,4,symptoms,2.01006
+Medical Health,5,hospital,1.98205
+Medical Health,6,patients,1.94953
+Medical Health,7,dr,1.90501
+Medical Health,8,disease,1.68446
+Medical Health,9,treatment,1.68084
+Medical Health,10,doctors,1.61813
+Medical Health,11,doctor,1.58903
+Medical Health,12,vaccine,1.56906
+Medical Health,13,diagnosed,1.44957
+Medical Health,14,drug,1.39403
+Medical Health,15,skin,1.39035
+Medical Health,16,care,1.31086
+Medical Health,17,fda,1.25697
+Medical Health,18,diagnosed with,1.25215
+Medical Health,19,body,1.24228
+Medical Health,20,surgery,1.23242
+Science,1,science,2.561
+Science,2,wildlife,2.24417
+Science,3,species,1.94385
+Science,4,animal,1.86352
+Science,5,earth,1.81654
+Science,6,scientific,1.81547
+Science,7,climate,1.80391
+Science,8,scientists,1.70844
+Science,9,weather,1.67851
+Science,10,nasa,1.66836
+Science,11,space,1.65727
+Science,12,environmental,1.57536
+Science,13,animals,1.50247
+Science,14,residents,1.49133
+Science,15,water,1.45336
+Science,16,conservation,1.39303
+Science,17,nuclear,1.25565
+Science,18,waste,1.22822
+Science,19,pollution,1.14374
+Science,20,rocket,1.12481
+Sports,1,team,2.15132
+Sports,2,league,2.06507
+Sports,3,sports,2.02108
+Sports,4,game,1.96418
+Sports,5,sport,1.89022
+Sports,6,games,1.70326
+Sports,7,coach,1.69518
+Sports,8,racing,1.58602
+Sports,9,players,1.56915
+Sports,10,race,1.53762
+Sports,11,tournament,1.47413
+Sports,12,club,1.43025
+Sports,13,player,1.4259
+Sports,14,match,1.39419
+Sports,15,golf,1.37184
+Sports,16,championship,1.33931
+Sports,17,cup,1.20953
+Sports,18,fans,1.18834
+Sports,19,athletes,1.18409
+Sports,20,win,1.17777
+Technology & Computing,1,ai,4.03059
+Technology & Computing,2,tech,2.44982
+Technology & Computing,3,technology,2.44831
+Technology & Computing,4,users,2.12037
+Technology & Computing,5,security,1.64653
+Technology & Computing,6,google,1.58966
+Technology & Computing,7,robot,1.52472
+Technology & Computing,8,intelligence,1.50318
+Technology & Computing,9,apple,1.44128
+Technology & Computing,10,phone,1.42938
+Technology & Computing,11,cnet,1.42396
+Technology & Computing,12,software,1.40269
+Technology & Computing,13,smart,1.38006
+Technology & Computing,14,verge,1.37148
+Technology & Computing,15,iphone,1.33882
+Technology & Computing,16,computer,1.33475
+Technology & Computing,17,devices,1.33215
+Technology & Computing,18,web,1.30987
+Technology & Computing,19,internet,1.29847
+Technology & Computing,20,pro,1.24266

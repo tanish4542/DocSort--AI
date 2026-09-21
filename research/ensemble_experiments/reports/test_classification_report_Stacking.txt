@@ -1,0 +1,14 @@
+Test Classification Report — Stacking
+============================================================
+                        precision    recall  f1-score   support
+
+  Business and Finance     0.9240    0.9240    0.9240       645
+         Entertainment     0.9628    0.9628    0.9628       645
+        Medical Health     0.9482    0.9643    0.9562       645
+               Science     0.9353    0.9194    0.9273       645
+                Sports     0.9767    0.9752    0.9760       645
+Technology & Computing     0.9211    0.9225    0.9218       645
+
+              accuracy                         0.9447      3870
+             macro avg     0.9447    0.9447    0.9447      3870
+          weighted avg     0.9447    0.9447    0.9447      3870

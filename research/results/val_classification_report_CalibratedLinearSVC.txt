@@ -1,0 +1,14 @@
+Validation Classification Report — CalibratedLinearSVC
+============================================================
+                        precision    recall  f1-score   support
+
+  Business and Finance     0.9300    0.9271    0.9286       645
+         Entertainment     0.9480    0.9612    0.9546       645
+        Medical Health     0.9425    0.9395    0.9410       645
+               Science     0.9260    0.9318    0.9289       645
+                Sports     0.9752    0.9752    0.9752       645
+Technology & Computing     0.9434    0.9302    0.9368       645
+
+              accuracy                         0.9442      3870
+             macro avg     0.9442    0.9442    0.9442      3870
+          weighted avg     0.9442    0.9442    0.9442      3870

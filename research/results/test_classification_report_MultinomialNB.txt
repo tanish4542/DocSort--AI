@@ -1,0 +1,14 @@
+Test Classification Report — MultinomialNB
+============================================================
+                        precision    recall  f1-score   support
+
+  Business and Finance     0.9052    0.8589    0.8815       645
+         Entertainment     0.8864    0.9674    0.9251       645
+        Medical Health     0.9350    0.9147    0.9248       645
+               Science     0.9132    0.8806    0.8966       645
+                Sports     0.9823    0.9488    0.9653       645
+Technology & Computing     0.8555    0.8992    0.8768       645
+
+              accuracy                         0.9116      3870
+             macro avg     0.9129    0.9116    0.9117      3870
+          weighted avg     0.9129    0.9116    0.9117      3870

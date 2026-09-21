@@ -1,0 +1,147 @@
+======================================================================
+DOCSORT AI — LINEARSVC TOP INDICATIVE FEATURES BY DOMAIN
+======================================================================
+
+Domain: Business and Finance
+--------------------------------------------------
+   1. business                  | Weight: +3.00315
+   2. financial                 | Weight: +2.02873
+   3. market                    | Weight: +2.02251
+   4. company                   | Weight: +1.90171
+   5. billion                   | Weight: +1.80208
+   6. investors                 | Weight: +1.77285
+   7. employees                 | Weight: +1.72533
+   8. stock                     | Weight: +1.55823
+   9. bank                      | Weight: +1.53018
+  10. workers                   | Weight: +1.49212
+  11. prices                    | Weight: +1.47957
+  12. tax                       | Weight: +1.42456
+  13. leaders                   | Weight: +1.35575
+  14. trading                   | Weight: +1.31300
+  15. finance                   | Weight: +1.29263
+  16. inflation                 | Weight: +1.28234
+  17. reuters                   | Weight: +1.28055
+  18. money                     | Weight: +1.24366
+  19. ceo                       | Weight: +1.23565
+  20. economy                   | Weight: +1.21985
+
+
+Domain: Entertainment
+--------------------------------------------------
+   1. film                      | Weight: +3.21095
+   2. music                     | Weight: +2.87293
+   3. show                      | Weight: +2.68441
+   4. movie                     | Weight: +2.49973
+   5. the show                  | Weight: +2.30325
+   6. entertainment             | Weight: +2.22500
+   7. album                     | Weight: +1.78121
+   8. tv                        | Weight: +1.70385
+   9. band                      | Weight: +1.69208
+  10. song                      | Weight: +1.63302
+  11. series                    | Weight: +1.63274
+  12. character                 | Weight: +1.59653
+  13. films                     | Weight: +1.57703
+  14. episode                   | Weight: +1.57053
+  15. festival                  | Weight: +1.54434
+  16. season                    | Weight: +1.53663
+  17. actor                     | Weight: +1.50997
+  18. singer                    | Weight: +1.47594
+  19. episodes                  | Weight: +1.40006
+  20. the film                  | Weight: +1.39244
+
+
+Domain: Medical Health
+--------------------------------------------------
+   1. health                    | Weight: +3.60361
+   2. medical                   | Weight: +2.83298
+   3. cancer                    | Weight: +2.30260
+   4. symptoms                  | Weight: +2.01006
+   5. hospital                  | Weight: +1.98205
+   6. patients                  | Weight: +1.94953
+   7. dr                        | Weight: +1.90501
+   8. disease                   | Weight: +1.68446
+   9. treatment                 | Weight: +1.68084
+  10. doctors                   | Weight: +1.61813
+  11. doctor                    | Weight: +1.58903
+  12. vaccine                   | Weight: +1.56906
+  13. diagnosed                 | Weight: +1.44957
+  14. drug                      | Weight: +1.39403
+  15. skin                      | Weight: +1.39035
+  16. care                      | Weight: +1.31086
+  17. fda                       | Weight: +1.25697
+  18. diagnosed with            | Weight: +1.25215
+  19. body                      | Weight: +1.24228
+  20. surgery                   | Weight: +1.23242
+
+
+Domain: Science
+--------------------------------------------------
+   1. science                   | Weight: +2.56100
+   2. wildlife                  | Weight: +2.24417
+   3. species                   | Weight: +1.94385
+   4. animal                    | Weight: +1.86352
+   5. earth                     | Weight: +1.81654
+   6. scientific                | Weight: +1.81547
+   7. climate                   | Weight: +1.80391
+   8. scientists                | Weight: +1.70844
+   9. weather                   | Weight: +1.67851
+  10. nasa                      | Weight: +1.66836
+  11. space                     | Weight: +1.65727
+  12. environmental             | Weight: +1.57536
+  13. animals                   | Weight: +1.50247
+  14. residents                 | Weight: +1.49133
+  15. water                     | Weight: +1.45336
+  16. conservation              | Weight: +1.39303
+  17. nuclear                   | Weight: +1.25565
+  18. waste                     | Weight: +1.22822
+  19. pollution                 | Weight: +1.14374
+  20. rocket                    | Weight: +1.12481
+
+
+Domain: Sports
+--------------------------------------------------
+   1. team                      | Weight: +2.15132
+   2. league                    | Weight: +2.06507
+   3. sports                    | Weight: +2.02108
+   4. game                      | Weight: +1.96418
+   5. sport                     | Weight: +1.89022
+   6. games                     | Weight: +1.70326
+   7. coach                     | Weight: +1.69518
+   8. racing                    | Weight: +1.58602
+   9. players                   | Weight: +1.56915
+  10. race                      | Weight: +1.53762
+  11. tournament                | Weight: +1.47413
+  12. club                      | Weight: +1.43025
+  13. player                    | Weight: +1.42590
+  14. match                     | Weight: +1.39419
+  15. golf                      | Weight: +1.37184
+  16. championship              | Weight: +1.33931
+  17. cup                       | Weight: +1.20953
+  18. fans                      | Weight: +1.18834
+  19. athletes                  | Weight: +1.18409
+  20. win                       | Weight: +1.17777
+
+
+Domain: Technology & Computing
+--------------------------------------------------
+   1. ai                        | Weight: +4.03059
+   2. tech                      | Weight: +2.44982
+   3. technology                | Weight: +2.44831
+   4. users                     | Weight: +2.12037
+   5. security                  | Weight: +1.64653
+   6. google                    | Weight: +1.58966
+   7. robot                     | Weight: +1.52472
+   8. intelligence              | Weight: +1.50318
+   9. apple                     | Weight: +1.44128
+  10. phone                     | Weight: +1.42938
+  11. cnet                      | Weight: +1.42396
+  12. software                  | Weight: +1.40269
+  13. smart                     | Weight: +1.38006
+  14. verge                     | Weight: +1.37148
+  15. iphone                    | Weight: +1.33882
+  16. computer                  | Weight: +1.33475
+  17. devices                   | Weight: +1.33215
+  18. web                       | Weight: +1.30987
+  19. internet                  | Weight: +1.29847
+  20. pro                       | Weight: +1.24266
+

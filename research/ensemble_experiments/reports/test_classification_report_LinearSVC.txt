@@ -1,0 +1,14 @@
+Test Classification Report — LinearSVC
+============================================================
+                        precision    recall  f1-score   support
+
+  Business and Finance     0.9391    0.9085    0.9236       645
+         Entertainment     0.9541    0.9659    0.9599       645
+        Medical Health     0.9438    0.9628    0.9532       645
+               Science     0.9399    0.9209    0.9303       645
+                Sports     0.9722    0.9767    0.9745       645
+Technology & Computing     0.9206    0.9349    0.9277       645
+
+              accuracy                         0.9450      3870
+             macro avg     0.9449    0.9450    0.9449      3870
+          weighted avg     0.9449    0.9450    0.9449      3870

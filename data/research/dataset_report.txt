@@ -1,0 +1,101 @@
+======================================================================
+DOCSORT AI — RESEARCH DATASET PREPARATION REPORT
+STATUS: SUCCESS (VALIDATED & BALANCED)
+======================================================================
+
+1. DATASET SOURCE
+  - Dataset Source: Hugging Face
+  - Dataset Name: mdonigian/iab-news-classification
+  - Split: train
+  - Original dataset: 106,280
+
+2. TARGET CATEGORIES (6)
+  - Business and Finance
+  - Medical Health
+  - Sports
+  - Technology & Computing
+  - Science
+  - Entertainment
+
+3. RAW SUBSET COUNTS
+  - Six-category raw subset: 41,839
+      * Business and Finance: 8,157
+      * Medical Health: 5,686
+      * Sports: 11,401
+      * Technology & Computing: 4,927
+      * Science: 4,576
+      * Entertainment: 7,092
+
+4. DATA CLEANING SUMMARY
+  - Missing/null text removed: 0
+  - Short documents (<100 chars) removed: 0
+  - Duplicate URLs removed: 0
+  - Exact duplicate texts removed: 2,675
+  - Clean unique documents: 39,164
+  - Percentage of selected records removed: 6.39%
+
+5. BALANCED SAMPLING SPECIFICATIONS
+  - Final documents: 25,800
+  - Documents per class: 4,300
+  - Random seed: 42
+  - Oversampling: None (No oversampling)
+  - Synthetic data: None (No synthetic data)
+  - Cross-dataset supplementation: None (No cross-dataset supplementation)
+  - Final columns: ['url', 'domain', 'text', 'label']
+
+6. FINAL CLASS DISTRIBUTION
+  - Business and Finance: 4,300
+  - Medical Health: 4,300
+  - Sports: 4,300
+  - Technology & Computing: 4,300
+  - Science: 4,300
+  - Entertainment: 4,300
+
+7. PER-CATEGORY TEXT LENGTH METRICS (CHARACTERS)
+  - Business and Finance:
+      Count: 4,300
+      Min Length: 268
+      Max Length: 70,968
+      Mean Length: 3,677.2
+      Median Length: 3,138.0
+  - Medical Health:
+      Count: 4,300
+      Min Length: 269
+      Max Length: 51,744
+      Mean Length: 3,414.7
+      Median Length: 3,095.0
+  - Sports:
+      Count: 4,300
+      Min Length: 292
+      Max Length: 43,944
+      Mean Length: 3,386.9
+      Median Length: 2,938.0
+  - Technology & Computing:
+      Count: 4,300
+      Min Length: 275
+      Max Length: 51,723
+      Mean Length: 3,529.6
+      Median Length: 2,987.0
+  - Science:
+      Count: 4,300
+      Min Length: 278
+      Max Length: 34,441
+      Mean Length: 3,184.3
+      Median Length: 2,987.5
+  - Entertainment:
+      Count: 4,300
+      Min Length: 263
+      Max Length: 78,781
+      Mean Length: 3,662.1
+      Median Length: 2,967.0
+
+8. DEDUPLICATION & INTEGRITY VALIDATION
+  - Total unique URLs: 25,800 (Expected: 25,800)
+  - Total unique article texts: 25,800 (Expected: 25,800)
+  - Null text values: 0
+  - Empty text values: 0
+
+9. INTEGRITY ASSURANCE
+  - No model training performed.
+  - No train/val/test splits created.
+  - No existing DocSort model or pipeline modified.

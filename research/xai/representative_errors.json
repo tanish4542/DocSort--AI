@@ -1,0 +1,1370 @@
+[
+  {
+    "document_id": 13,
+    "url": "https://www.newsmax.com/finance/streettalk/faa-boeing-aurbus/2024/06/14/id/1168724/",
+    "true_class": "Business and Finance",
+    "predicted_class": "Technology & Computing",
+    "decision_margin": 0.1345,
+    "features_supporting_predicted": [
+      [
+        "supplier",
+        0.0541
+      ],
+      [
+        "the faa",
+        0.0394
+      ],
+      [
+        "faa",
+        0.035
+      ],
+      [
+        "falsified",
+        0.0322
+      ],
+      [
+        "verify",
+        0.0321
+      ],
+      [
+        "to verify",
+        0.0282
+      ],
+      [
+        "aviation",
+        0.0254
+      ],
+      [
+        "used",
+        0.0253
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "reuters",
+        0.1131
+      ],
+      [
+        "boeing",
+        0.0567
+      ],
+      [
+        "airbus",
+        0.0459
+      ],
+      [
+        "supplier",
+        0.0324
+      ],
+      [
+        "manufacturing",
+        0.0303
+      ],
+      [
+        "spirit",
+        0.0287
+      ],
+      [
+        "aerosystems",
+        0.0271
+      ],
+      [
+        "spirit aerosystems",
+        0.0271
+      ]
+    ],
+    "text_excerpt": "The U.S. Federal Aviation Administration is investigating falsified documents that were used to verify the authenticity of titanium used in some recently manufactured Boeing and Airbus jets, The New York Times reported Friday. The falsified documents are being investigated by the..."
+  },
+  {
+    "document_id": 14,
+    "url": "https://www.forbes.com/sites/zengernews/2024/06/03/generative-ai-is-forcing-employees-to-level-up-report-states/",
+    "true_class": "Business and Finance",
+    "predicted_class": "Technology & Computing",
+    "decision_margin": 0.2463,
+    "features_supporting_predicted": [
+      [
+        "ai",
+        0.392
+      ],
+      [
+        "tech",
+        0.0614
+      ],
+      [
+        "google",
+        0.048
+      ],
+      [
+        "generative",
+        0.0453
+      ],
+      [
+        "intelligence",
+        0.0449
+      ],
+      [
+        "generative ai",
+        0.0412
+      ],
+      [
+        "ai in",
+        0.0339
+      ],
+      [
+        "technologies",
+        0.0329
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "employees",
+        0.1316
+      ],
+      [
+        "jobs",
+        0.0942
+      ],
+      [
+        "finance",
+        0.0467
+      ],
+      [
+        "leaders",
+        0.0432
+      ],
+      [
+        "investing",
+        0.0378
+      ],
+      [
+        "organizations",
+        0.0354
+      ],
+      [
+        "million",
+        0.0352
+      ],
+      [
+        "employers",
+        0.0341
+      ]
+    ],
+    "text_excerpt": "By Melanie Wilcox About three quarters of organizations plan to change their talent strategies in the next two years, focusing on altering work processes and investing in upskilling and reskilling, according to the Deloitte AI Institute\u2019s latest report . To address potential job..."
+  },
+  {
+    "document_id": 88,
+    "url": "https://techcrunch.com/2026/01/22/gm-to-end-chevy-bolt-ev-production-next-year-move-china-made-buick-to-u-s-factory/",
+    "true_class": "Business and Finance",
+    "predicted_class": "Technology & Computing",
+    "decision_margin": 0.1965,
+    "features_supporting_predicted": [
+      [
+        "techcrunch",
+        0.0945
+      ],
+      [
+        "vehicles",
+        0.0567
+      ],
+      [
+        "its",
+        0.0373
+      ],
+      [
+        "factory",
+        0.0336
+      ],
+      [
+        "electric",
+        0.0329
+      ],
+      [
+        "gm",
+        0.0329
+      ],
+      [
+        "affordable",
+        0.0285
+      ],
+      [
+        "dealerships",
+        0.0259
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "tax",
+        0.0593
+      ],
+      [
+        "company",
+        0.042
+      ],
+      [
+        "economic",
+        0.0364
+      ],
+      [
+        "credit",
+        0.0332
+      ],
+      [
+        "production",
+        0.0297
+      ],
+      [
+        "investments",
+        0.0289
+      ],
+      [
+        "sales",
+        0.0288
+      ],
+      [
+        "to techcrunch",
+        0.0275
+      ]
+    ],
+    "text_excerpt": "General Motors is shuffling where its vehicles are made in a move that will shift production away from China and Mexico and to a U.S. factory in Kansas. That change will also mean the end of its rebooted Chevrolet Bolt EV, the only vehicle currently built at the Fairfax Assembly..."
+  },
+  {
+    "document_id": 209,
+    "url": "https://www.businessinsider.com/surgeon-general-warning-label-social-media-why-health-young-people-2024-06",
+    "true_class": "Technology & Computing",
+    "predicted_class": "Business and Finance",
+    "decision_margin": 0.2896,
+    "features_supporting_predicted": [
+      [
+        "business",
+        0.0805
+      ],
+      [
+        "market",
+        0.0715
+      ],
+      [
+        "bank",
+        0.0567
+      ],
+      [
+        "company",
+        0.0564
+      ],
+      [
+        "ceo",
+        0.056
+      ],
+      [
+        "companies",
+        0.0456
+      ],
+      [
+        "employees",
+        0.0391
+      ],
+      [
+        "investors",
+        0.0379
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "ai",
+        0.1791
+      ],
+      [
+        "tech",
+        0.1134
+      ],
+      [
+        "apple",
+        0.0631
+      ],
+      [
+        "meta",
+        0.0516
+      ],
+      [
+        "users",
+        0.0422
+      ],
+      [
+        "app",
+        0.0394
+      ],
+      [
+        "models",
+        0.0359
+      ],
+      [
+        "editor",
+        0.0322
+      ]
+    ],
+    "text_excerpt": "But first, follow at your own risk. If this was forwarded to you, sign up here. The big story A solution for socials Anna Moneymaker/Getty Images; Chesnot/Getty Images; Chelsea Jia Feng/BI Social media has gotten so bad that the country's top doctor is intervening. Dr. Vivek Murt..."
+  },
+  {
+    "document_id": 341,
+    "url": "https://www.dailymail.co.uk/wires/reuters/article-13496181/Cloud-provider-CoreWeave-invest-2-2-bln-Europe.html?ns_mchannel=rss&ns_campaign=1490&ito=1490",
+    "true_class": "Technology & Computing",
+    "predicted_class": "Business and Finance",
+    "decision_margin": 0.2983,
+    "features_supporting_predicted": [
+      [
+        "billion",
+        0.171
+      ],
+      [
+        "company",
+        0.103
+      ],
+      [
+        "investment",
+        0.0774
+      ],
+      [
+        "reuters",
+        0.0754
+      ],
+      [
+        "investors",
+        0.0693
+      ],
+      [
+        "invest",
+        0.0663
+      ],
+      [
+        "debt",
+        0.0537
+      ],
+      [
+        "to invest",
+        0.0475
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "ai",
+        0.2122
+      ],
+      [
+        "cloud",
+        0.0782
+      ],
+      [
+        "technology",
+        0.0769
+      ],
+      [
+        "google",
+        0.0621
+      ],
+      [
+        "web",
+        0.0601
+      ],
+      [
+        "data",
+        0.0587
+      ],
+      [
+        "intelligence",
+        0.0581
+      ],
+      [
+        "artificial",
+        0.0377
+      ]
+    ],
+    "text_excerpt": "Cloud provider CoreWeave to invest $2.2 bln in Europe By Reuters Published: 02:04 EDT, 5 June 2024 | Updated: 02:04 EDT, 5 June 2024 June 5 (Reuters) - Specialized cloud provider CoreWeave said on Wednesday that it plans to invest an additional $2.2 billion in Europe to meet risi..."
+  },
+  {
+    "document_id": 346,
+    "url": "https://www.forbes.com/sites/digital-assets/2024/06/18/alliances-show-the-web3-revolution-is-unstoppable-with-robinhood-secret-network-and-tezos/",
+    "true_class": "Technology & Computing",
+    "predicted_class": "Business and Finance",
+    "decision_margin": 0.4253,
+    "features_supporting_predicted": [
+      [
+        "investors",
+        0.0734
+      ],
+      [
+        "finance",
+        0.0639
+      ],
+      [
+        "assets",
+        0.057
+      ],
+      [
+        "market",
+        0.0564
+      ],
+      [
+        "financial",
+        0.056
+      ],
+      [
+        "economy",
+        0.046
+      ],
+      [
+        "stock",
+        0.0398
+      ],
+      [
+        "billion",
+        0.0394
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "web",
+        0.0544
+      ],
+      [
+        "tech",
+        0.051
+      ],
+      [
+        "ai",
+        0.0476
+      ],
+      [
+        "data",
+        0.0447
+      ],
+      [
+        "computing",
+        0.044
+      ],
+      [
+        "privacy",
+        0.0401
+      ],
+      [
+        "technologies",
+        0.0386
+      ],
+      [
+        "intelligence",
+        0.0373
+      ]
+    ],
+    "text_excerpt": "The Secret Network Team for the DeCC Day Secret Network When does a revolution become unstoppable? In my view, it\u2019s when a movement forges relationships outside its small, initial cadre of visionaries and early adopters. Think of it like a new nation that\u2019s just won freedom from..."
+  },
+  {
+    "document_id": 49,
+    "url": "https://www.newscientist.com/article/2479542-why-honing-your-sense-of-smell-could-keep-you-sharp-as-you-age/",
+    "true_class": "Science",
+    "predicted_class": "Medical Health",
+    "decision_margin": 0.4099,
+    "features_supporting_predicted": [
+      [
+        "disease",
+        0.1064
+      ],
+      [
+        "health",
+        0.0837
+      ],
+      [
+        "people",
+        0.0458
+      ],
+      [
+        "alzheimer",
+        0.0413
+      ],
+      [
+        "als",
+        0.0368
+      ],
+      [
+        "cognitive",
+        0.0352
+      ],
+      [
+        "dysfunction",
+        0.0349
+      ],
+      [
+        "impairment",
+        0.0336
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "scientific",
+        0.0669
+      ],
+      [
+        "animals",
+        0.0563
+      ],
+      [
+        "research",
+        0.052
+      ],
+      [
+        "smell",
+        0.0517
+      ],
+      [
+        "says",
+        0.0467
+      ],
+      [
+        "university",
+        0.0423
+      ],
+      [
+        "found",
+        0.0383
+      ],
+      [
+        "study",
+        0.036
+      ]
+    ],
+    "text_excerpt": "I am not normally a fan of lotions and potions, but right now, four small vials sit on my bedside table. Every morning and every night, I open and sniff each one in turn, savouring the scents as they hit my nostrils. First, the sharp tang of lemon, followed by the abrasive chill..."
+  },
+  {
+    "document_id": 127,
+    "url": "https://nationaltoday.com/insect-repellent-awareness-day/",
+    "true_class": "Science",
+    "predicted_class": "Medical Health",
+    "decision_margin": 0.2236,
+    "features_supporting_predicted": [
+      [
+        "patients",
+        0.0821
+      ],
+      [
+        "blood",
+        0.08
+      ],
+      [
+        "disease",
+        0.0634
+      ],
+      [
+        "treatment",
+        0.0628
+      ],
+      [
+        "medicine",
+        0.0542
+      ],
+      [
+        "malaria",
+        0.0491
+      ],
+      [
+        "awareness",
+        0.0479
+      ],
+      [
+        "prevention",
+        0.0476
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "science",
+        0.0966
+      ],
+      [
+        "scientists",
+        0.0728
+      ],
+      [
+        "discovered",
+        0.0628
+      ],
+      [
+        "insects",
+        0.0413
+      ],
+      [
+        "insect",
+        0.0377
+      ],
+      [
+        "discovery",
+        0.0349
+      ],
+      [
+        "science and",
+        0.0343
+      ],
+      [
+        "parasites",
+        0.034
+      ]
+    ],
+    "text_excerpt": "History of Insect Repellent Awareness Day People reacting to insect bites is as old as time. Insects are everywhere and over time, people have tried to develop measures to control them and in turn stop the spread of diseases that they transmit. One of the major diseases of concer..."
+  },
+  {
+    "document_id": 305,
+    "url": "https://www.dailymail.co.uk/sciencetech/article-13529835/best-drinks-pain-spicy-food-NEVER-iced-water.html",
+    "true_class": "Science",
+    "predicted_class": "Medical Health",
+    "decision_margin": 0.1578,
+    "features_supporting_predicted": [
+      [
+        "dr",
+        0.1519
+      ],
+      [
+        "pain",
+        0.0749
+      ],
+      [
+        "your",
+        0.0352
+      ],
+      [
+        "mouth",
+        0.0322
+      ],
+      [
+        "alcohol",
+        0.0281
+      ],
+      [
+        "in your",
+        0.0254
+      ],
+      [
+        "foods",
+        0.0231
+      ],
+      [
+        "help",
+        0.023
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "water",
+        0.1044
+      ],
+      [
+        "heat",
+        0.0479
+      ],
+      [
+        "university",
+        0.0338
+      ],
+      [
+        "molecules",
+        0.0321
+      ],
+      [
+        "temperatures",
+        0.0299
+      ],
+      [
+        "chemistry",
+        0.0272
+      ],
+      [
+        "reach",
+        0.0269
+      ],
+      [
+        "university of",
+        0.0244
+      ]
+    ],
+    "text_excerpt": "With the weekend just around the corner now, many Britons will be looking forward to a night on the sofa with a delicious takeaway. And if your go-to choice is a spicy curry, new advice will come as music to your ears. Dr Daniel Eldridge, a senior lecturer in Chemistry at Swinbur..."
+  },
+  {
+    "document_id": 119,
+    "url": "https://people.com/father-of-3-dies-days-after-endurance-event-family-says-11779159",
+    "true_class": "Medical Health",
+    "predicted_class": "Science",
+    "decision_margin": 0.0585,
+    "features_supporting_predicted": [
+      [
+        "earth",
+        0.0645
+      ],
+      [
+        "mountain",
+        0.0403
+      ],
+      [
+        "hole",
+        0.0384
+      ],
+      [
+        "near",
+        0.0331
+      ],
+      [
+        "feet",
+        0.0265
+      ],
+      [
+        "mount",
+        0.0263
+      ],
+      [
+        "snow",
+        0.0242
+      ],
+      [
+        "the earth",
+        0.0225
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "medical",
+        0.0825
+      ],
+      [
+        "coroner",
+        0.0399
+      ],
+      [
+        "people",
+        0.038
+      ],
+      [
+        "children",
+        0.0372
+      ],
+      [
+        "cardiac",
+        0.0301
+      ],
+      [
+        "died",
+        0.0295
+      ],
+      [
+        "cause",
+        0.027
+      ],
+      [
+        "death",
+        0.0251
+      ]
+    ],
+    "text_excerpt": "NEED TO KNOW A father of three is dead after he took part in an endurance challenge made to mimic climbing Mount Everest Slava Leykind died on July 2 at age 43 from \u201can electrolyte imbalance causing cardiac arrest\" He was remembered by loved ones as a \"perfect soulmate\" and a \"su..."
+  },
+  {
+    "document_id": 287,
+    "url": "https://www.cbsnews.com/losangeles/news/bacteria-warning-issued-for-18-beaches-in-los-angeles-county/",
+    "true_class": "Medical Health",
+    "predicted_class": "Science",
+    "decision_margin": 1.1956,
+    "features_supporting_predicted": [
+      [
+        "storm",
+        0.1019
+      ],
+      [
+        "the coast",
+        0.0907
+      ],
+      [
+        "coast",
+        0.0806
+      ],
+      [
+        "beach",
+        0.0745
+      ],
+      [
+        "area",
+        0.0718
+      ],
+      [
+        "beaches",
+        0.0656
+      ],
+      [
+        "residents",
+        0.061
+      ],
+      [
+        "carbon",
+        0.045
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "health",
+        0.0866
+      ],
+      [
+        "county",
+        0.0345
+      ],
+      [
+        "she",
+        0.023
+      ],
+      [
+        "the bacteria",
+        0.0206
+      ],
+      [
+        "drain",
+        0.0191
+      ],
+      [
+        "public",
+        0.0187
+      ],
+      [
+        "heal",
+        0.0184
+      ],
+      [
+        "warning",
+        0.0174
+      ]
+    ],
+    "text_excerpt": "CBS News Los Angeles Live The Los Angeles County Department of Public Health is warning residents to avoid swimming, surfing and playing in ocean waters at 18 area beaches due to high bacteria warnings on Thursday, June 27. The warning covers the following beaches: Santa Monica C..."
+  },
+  {
+    "document_id": 413,
+    "url": "https://www.foxnews.com/health/bird-flu-infected-cows-died-5-states-experts-closely-monitor-disease",
+    "true_class": "Medical Health",
+    "predicted_class": "Science",
+    "decision_margin": 1.0074,
+    "features_supporting_predicted": [
+      [
+        "animal",
+        0.083
+      ],
+      [
+        "animals",
+        0.0643
+      ],
+      [
+        "bird",
+        0.061
+      ],
+      [
+        "farmers",
+        0.0539
+      ],
+      [
+        "killed",
+        0.0523
+      ],
+      [
+        "found",
+        0.0398
+      ],
+      [
+        "experiment",
+        0.0343
+      ],
+      [
+        "particles",
+        0.0337
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "health",
+        0.0955
+      ],
+      [
+        "flu",
+        0.071
+      ],
+      [
+        "infections",
+        0.07
+      ],
+      [
+        "virus",
+        0.061
+      ],
+      [
+        "disease",
+        0.0579
+      ],
+      [
+        "bird flu",
+        0.0427
+      ],
+      [
+        "flu virus",
+        0.0377
+      ],
+      [
+        "infected",
+        0.0366
+      ]
+    ],
+    "text_excerpt": "World Health Organization Director-General Tedros Ghebreyesus has given a fresh new warning about the likelihood of Disease X breaking out, telling global world leaders that it is \"a matter of when, not if\" it will strike. (World Governments Summit) Dairy cows infected with bird..."
+  },
+  {
+    "document_id": 173,
+    "url": "https://www.thecooldown.com/green-tech/havelar-3d-printed-homes-portugal-affordable/",
+    "true_class": "Technology & Computing",
+    "predicted_class": "Science",
+    "decision_margin": 0.7524,
+    "features_supporting_predicted": [
+      [
+        "earth",
+        0.1184
+      ],
+      [
+        "carbon",
+        0.0822
+      ],
+      [
+        "atlas",
+        0.0538
+      ],
+      [
+        "eco",
+        0.0533
+      ],
+      [
+        "eco friendly",
+        0.0519
+      ],
+      [
+        "pollution",
+        0.0501
+      ],
+      [
+        "area",
+        0.0427
+      ],
+      [
+        "the environment",
+        0.0408
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "tech",
+        0.0735
+      ],
+      [
+        "technology",
+        0.0713
+      ],
+      [
+        "printing",
+        0.0466
+      ],
+      [
+        "windows",
+        0.0363
+      ],
+      [
+        "printer",
+        0.0337
+      ],
+      [
+        "affordable",
+        0.0308
+      ],
+      [
+        "site",
+        0.0219
+      ],
+      [
+        "square",
+        0.021
+      ]
+    ],
+    "text_excerpt": "Given how out of control housing prices have gotten, the idea of just printing out an affordable house is appealing \u2014 and Havelar in Portugal is making it a reality, New Atlas reported . Havelar recently completed an unnamed, 860-square-foot, two-bedroom house in the Greater Port..."
+  },
+  {
+    "document_id": 212,
+    "url": "https://www.thecooldown.com/green-home/meijer-tesla-charging-station-theft-cables/",
+    "true_class": "Technology & Computing",
+    "predicted_class": "Science",
+    "decision_margin": 0.2227,
+    "features_supporting_predicted": [
+      [
+        "pollution",
+        0.091
+      ],
+      [
+        "the environment",
+        0.0597
+      ],
+      [
+        "environment",
+        0.057
+      ],
+      [
+        "photo credit",
+        0.0493
+      ],
+      [
+        "waste",
+        0.0473
+      ],
+      [
+        "carbon",
+        0.042
+      ],
+      [
+        "our",
+        0.0299
+      ],
+      [
+        "credit reddit",
+        0.0283
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "tech",
+        0.1077
+      ],
+      [
+        "charging",
+        0.0969
+      ],
+      [
+        "cameras",
+        0.0761
+      ],
+      [
+        "technology",
+        0.0617
+      ],
+      [
+        "vehicles",
+        0.0531
+      ],
+      [
+        "stations",
+        0.0513
+      ],
+      [
+        "charging stations",
+        0.0484
+      ],
+      [
+        "cables",
+        0.0384
+      ]
+    ],
+    "text_excerpt": "Photo Credit: Getty Images A frustrated Tesla owner has shared photos of damaged electric vehicle charging stations in the parking lot of an Ohio grocery store. The person posted images in the r/teslamotors subreddit showing the severed cables and a repair truck that had arrived..."
+  },
+  {
+    "document_id": 316,
+    "url": "https://www.newscientist.com/article/2145165-icy-hard-drives-cram-5300-movies-onto-a-postage-stamp/",
+    "true_class": "Technology & Computing",
+    "predicted_class": "Science",
+    "decision_margin": 0.9127,
+    "features_supporting_predicted": [
+      [
+        "molecules",
+        0.0626
+      ],
+      [
+        "temperatures",
+        0.0599
+      ],
+      [
+        "university",
+        0.0496
+      ],
+      [
+        "magnets",
+        0.0469
+      ],
+      [
+        "temperature",
+        0.0465
+      ],
+      [
+        "space",
+        0.0448
+      ],
+      [
+        "molecule",
+        0.0427
+      ],
+      [
+        "carbon",
+        0.0411
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "data",
+        0.0946
+      ],
+      [
+        "google",
+        0.0824
+      ],
+      [
+        "computer",
+        0.0465
+      ],
+      [
+        "computers",
+        0.0311
+      ],
+      [
+        "smartphone",
+        0.0311
+      ],
+      [
+        "facebook",
+        0.0298
+      ],
+      [
+        "hard drive",
+        0.0254
+      ],
+      [
+        "magnetic",
+        0.024
+      ]
+    ],
+    "text_excerpt": "Your Gmail photos could soon be held in cold storage Google The best way to put your photos on ice is to freeze them. Extremely cold molecules could soon hold hundreds of times more data than existing hard drives. By controlling the magnetism of individual molecules, Nick Chilton..."
+  },
+  {
+    "document_id": 1111,
+    "url": "https://www.wired.com/story/ai-carbon-emissions-energy-unknown-mystery-research/",
+    "true_class": "Science",
+    "predicted_class": "Technology & Computing",
+    "decision_margin": 0.8375,
+    "features_supporting_predicted": [
+      [
+        "ai",
+        0.2634
+      ],
+      [
+        "openai",
+        0.1139
+      ],
+      [
+        "google",
+        0.0981
+      ],
+      [
+        "chatgpt",
+        0.0707
+      ],
+      [
+        "models",
+        0.0696
+      ],
+      [
+        "users",
+        0.058
+      ],
+      [
+        "use",
+        0.0387
+      ],
+      [
+        "altman",
+        0.0334
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "environmental",
+        0.1194
+      ],
+      [
+        "climate",
+        0.1191
+      ],
+      [
+        "carbon",
+        0.0669
+      ],
+      [
+        "energy",
+        0.0566
+      ],
+      [
+        "emissions",
+        0.0547
+      ],
+      [
+        "says",
+        0.0424
+      ],
+      [
+        "climate change",
+        0.0399
+      ],
+      [
+        "we",
+        0.026
+      ]
+    ],
+    "text_excerpt": "\u201cPeople are often curious about how much energy a ChatGPT query uses,\u201d Sam Altman , the CEO of OpenAI , wrote in an aside in a long blog post last week. The average query, Altman wrote, uses 0.34 watt-hours of energy: \u201cAbout what an oven would use in a little over one second, or..."
+  },
+  {
+    "document_id": 1230,
+    "url": "https://www.forbes.com/sites/forbestechcouncil/2024/06/17/how-understanding-the-brain-enables-new-breakthroughs-in-tech-development/",
+    "true_class": "Science",
+    "predicted_class": "Technology & Computing",
+    "decision_margin": 0.5286,
+    "features_supporting_predicted": [
+      [
+        "technology",
+        0.1695
+      ],
+      [
+        "ai",
+        0.122
+      ],
+      [
+        "devices",
+        0.0524
+      ],
+      [
+        "machine",
+        0.0408
+      ],
+      [
+        "artificial",
+        0.0367
+      ],
+      [
+        "intelligence",
+        0.0334
+      ],
+      [
+        "capabilities",
+        0.031
+      ],
+      [
+        "system",
+        0.025
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "neurons",
+        0.0585
+      ],
+      [
+        "brain",
+        0.0577
+      ],
+      [
+        "brains",
+        0.0459
+      ],
+      [
+        "the universe",
+        0.0348
+      ],
+      [
+        "the brain",
+        0.0316
+      ],
+      [
+        "we",
+        0.0296
+      ],
+      [
+        "our",
+        0.0242
+      ],
+      [
+        "universe",
+        0.0229
+      ]
+    ],
+    "text_excerpt": "Achin Bhowmik, Ph.D., Chief Technology Officer and Executive Vice President of Engineering at Starkey and adjunct professor at Stanford. getty Imagine you\u2019re in a noisy coffee shop. You order a cup of coffee, sit at a table to wait for a friend and take in the cacophony of sounds..."
+  },
+  {
+    "document_id": 1235,
+    "url": "https://www.scientificamerican.com/article/openai-and-ginkgo-bioworks-show-how-ai-can-accelerate-scientific-discovery/",
+    "true_class": "Science",
+    "predicted_class": "Technology & Computing",
+    "decision_margin": 0.2921,
+    "features_supporting_predicted": [
+      [
+        "ai",
+        0.226
+      ],
+      [
+        "openai",
+        0.1143
+      ],
+      [
+        "robot",
+        0.11
+      ],
+      [
+        "autonomous",
+        0.0765
+      ],
+      [
+        "computer",
+        0.076
+      ],
+      [
+        "design",
+        0.0715
+      ],
+      [
+        "robots",
+        0.0536
+      ],
+      [
+        "google",
+        0.0469
+      ]
+    ],
+    "features_supporting_true": [
+      [
+        "science",
+        0.1478
+      ],
+      [
+        "experiments",
+        0.1423
+      ],
+      [
+        "lab",
+        0.0984
+      ],
+      [
+        "biology",
+        0.072
+      ],
+      [
+        "researchers",
+        0.0583
+      ],
+      [
+        "experiment",
+        0.0575
+      ],
+      [
+        "says",
+        0.0484
+      ],
+      [
+        "physics",
+        0.048
+      ]
+    ],
+    "text_excerpt": "March 13, 2026 3 min read Add Us On Google Add SciAm AI-designed experiments run by robots hint at a new approach to biology Researchers at OpenAI and Ginkgo Bioworks showed that an AI model working with an autonomous lab can design and iterate real biology experiments at unprece..."
+  }
+]
