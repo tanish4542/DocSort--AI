@@ -12,7 +12,7 @@ const howItWorks = [
   },
   {
     step: "02",
-    title: "Data mining pipeline",
+    title: "Machine learning pipeline",
     text: "Text is extracted, cleaned, tokenized, and de-noised so domain-specific vocabulary can surface reliably.",
   },
   {
@@ -23,55 +23,118 @@ const howItWorks = [
   {
     step: "04",
     title: "Auto sorting",
-    text: "Naive Bayes predicts the domain and the backend moves the file into the matching desktop folder instantly.",
+    text: "LinearSVC predicts the category and the backend moves the file into the matching desktop folder instantly.",
+  },
+];
+
+const supportedDomains = [
+  {
+    name: "Technology & Computing",
+    icon: "💻",
+    tagline: "Software, algorithms, cloud, and computing architecture",
+    description: "Source code documentation, system specifications, technical whitepapers, and computing infrastructure benchmarks.",
+    color: "#8b5cf6",
+    soft: "rgba(139, 92, 246, 0.16)",
+    border: "rgba(139, 92, 246, 0.32)",
+    sampleTerms: "Software, API, Cloud, Architecture, Hardware",
+  },
+  {
+    name: "Medical Health",
+    icon: "🏥",
+    tagline: "Clinical diagnoses, pharmacology, and patient care",
+    description: "Clinical trial summaries, medical diagnoses, treatment protocols, and pharmaceutical documentation.",
+    color: "#0ea5e9",
+    soft: "rgba(14, 165, 233, 0.16)",
+    border: "rgba(14, 165, 233, 0.32)",
+    sampleTerms: "Patient, Clinical, Diagnosis, Therapy, Healthcare",
+  },
+  {
+    name: "Business and Finance",
+    icon: "📈",
+    tagline: "Corporate finance, investments, and market economics",
+    description: "Quarterly balance sheets, equity research, earnings reports, regulatory filings, and macroeconomic updates.",
+    color: "#10b981",
+    soft: "rgba(16, 185, 129, 0.16)",
+    border: "rgba(16, 185, 129, 0.32)",
+    sampleTerms: "Revenue, Investment, Market, Equity, Earnings",
+  },
+  {
+    name: "Entertainment",
+    icon: "🎬",
+    tagline: "Cinema, music, performing arts, and media production",
+    description: "Film reviews, concert and festival announcements, screenplay drafts, album releases, and media commentary.",
+    color: "#d946ef",
+    soft: "rgba(217, 70, 239, 0.16)",
+    border: "rgba(217, 70, 239, 0.32)",
+    sampleTerms: "Film, Music, Album, Box Office, Festival",
+  },
+  {
+    name: "Sports",
+    icon: "⚽",
+    tagline: "Athletics, competitive leagues, and tournament coverage",
+    description: "Match recap analysis, league standings, player statistics, coaching strategies, and tournament schedules.",
+    color: "#f59e0b",
+    soft: "rgba(245, 158, 11, 0.16)",
+    border: "rgba(245, 158, 11, 0.32)",
+    sampleTerms: "Team, Tournament, Match, League, Season",
+  },
+  {
+    name: "Science",
+    icon: "🔬",
+    tagline: "Empirical research, astrophysics, and physical sciences",
+    description: "Peer-reviewed scientific preprints, laboratory experimentation reports, ecological datasets, and astronomy findings.",
+    color: "#f43f5e",
+    soft: "rgba(244, 63, 94, 0.16)",
+    border: "rgba(244, 63, 94, 0.32)",
+    sampleTerms: "Research, Laboratory, Experiment, Species, Physics",
   },
 ];
 
 const modelWorkflowSteps = [
   {
-    icon: "⬆️",
+    icon: "📄",
     title: "Document Upload",
-    text: "Secure multipart upload delivers the raw file to the inference service.",
+    text: "User uploads a PDF, DOCX, or TXT file into the processing pipeline.",
   },
   {
     icon: "📑",
     title: "Text Extraction",
-    text: "Format-aware parsers pull readable text from PDF, DOCX, or TXT sources.",
+    text: "Format-specific parsers extract raw textual content from the document.",
   },
   {
     icon: "🧼",
-    title: "Text Cleaning",
-    text: "Lowercasing and symbol stripping normalize tokens for consistent modeling.",
-  },
-  {
-    icon: "✂️",
-    title: "Stopword Removal",
-    text: "Frequent function words are removed so signal concentrates on content words.",
+    title: "Preprocessing",
+    text: "Whitespace normalization, control character removal, and lowercase tokenization prepare the text.",
   },
   {
     icon: "📊",
-    title: "TF-IDF Vectorization",
-    text: "Each term receives a score combining local frequency with global rarity.",
+    title: "TF-IDF Feature Extraction",
+    text: "100,000 unigram/bigram features with sublinear term frequency scaling construct a sparse numerical vector.",
+  },
+  {
+    icon: "🤖",
+    title: "Three ML Classifiers",
+    text: "All three research models (MultinomialNB, Logistic Regression, LinearSVC) evaluate the document vector.",
   },
   {
     icon: "⚖️",
-    title: "Feature Weight Calculation",
-    text: "Important stems receive higher weights inside the sparse document vector.",
+    title: "Model Comparison",
+    text: "Dynamic predictions and confidence/decision scores are compared alongside held-out test benchmarks.",
   },
   {
-    icon: "🧠",
-    title: "Naive Bayes Classification",
-    text: "Class-conditional probabilities rank each domain and select the argmax label.",
+    icon: "🏆",
+    title: "LinearSVC Selection",
+    text: "LinearSVC is selected as the final classifier because it achieved the highest test Macro F1 (94.49%).",
   },
   {
     icon: "🎯",
-    title: "Domain Prediction",
-    text: "The winning category is serialized back to the React dashboard with storage metadata.",
+    title: "Final Prediction",
+    text: "The winning category, decision margin, uncertainty tier, and top lexical features are finalized.",
   },
   {
     icon: "📁",
-    title: "Automatic Folder Sorting",
-    text: "The file is moved into the predicted domain folder under ~/Desktop/SortedDocuments.",
+    title: "Document Sorting",
+    text: "The document is automatically moved into its designated domain folder on disk (or staged if ambiguous).",
   },
 ];
 
@@ -100,13 +163,60 @@ function Home() {
       <main>
         <HeroSection onStart={() => navigate("/upload")} onLearnMore={handleLearnMore} />
 
+        {/* SIX RESEARCH DOMAINS SECTION */}
+        <section className="sectionBlock sectionBlock--domains" id="domains">
+          <div className="sectionHeading">
+            <span className="eyebrow">Supported Domains</span>
+            <h2>Six Research Categories</h2>
+            <p>
+              DocSort AI is powered by a high-dimensional LinearSVC classifier trained and evaluated across
+              all six research domains with 94.50% test accuracy.
+            </p>
+          </div>
+
+          <div className="domainGrid">
+            {supportedDomains.map((domain) => (
+              <article
+                key={domain.name}
+                className="domainCard cardRise"
+                style={{
+                  borderColor: domain.border,
+                  background: `linear-gradient(145deg, var(--surface) 0%, ${domain.soft} 100%)`,
+                }}
+              >
+                <div className="domainCard__header">
+                  <span
+                    className="domainCard__icon"
+                    aria-hidden="true"
+                    style={{ background: domain.soft, borderColor: domain.border }}
+                  >
+                    {domain.icon}
+                  </span>
+                  <span
+                    className="domainCard__badge"
+                    style={{ color: domain.color, borderColor: domain.border, background: domain.soft }}
+                  >
+                    {domain.name}
+                  </span>
+                </div>
+                <h3>{domain.name}</h3>
+                <p className="domainCard__tagline">{domain.tagline}</p>
+                <p className="domainCard__desc">{domain.description}</p>
+                <div className="domainCard__terms">
+                  <small>Key Signals: {domain.sampleTerms}</small>
+                </div>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section ref={featuresRef} className="sectionBlock sectionBlock--features" id="features">
           <div className="sectionHeading">
             <span className="eyebrow">Features</span>
             <h2>Designed to be a multidomain productivity tool</h2>
             <p>
               Intelligent automation, a transparent ML workflow, and presentation-ready visuals help you explain the
-              cross-domain document mining pipeline in seconds.
+              cross-domain document machine learning pipeline in seconds.
             </p>
           </div>
 
@@ -118,7 +228,7 @@ function Home() {
             <span className="eyebrow">How it works</span>
             <h2>From upload to sorted document — built for demos</h2>
             <p>
-              Each stage mirrors real data mining practice: ingest, preprocess, vectorize, classify, and operationalize
+              Each stage mirrors real machine learning practice: ingest, preprocess, vectorize, classify, and operationalize
               the outcome on disk.
             </p>
           </div>
@@ -173,20 +283,24 @@ function Home() {
             </div>
             <ul className="modelDetailsCard__list">
               <li>
-                The system uses <strong>TF-IDF vectorization</strong> to convert textual content into numerical feature
-                vectors that machine learning models can consume.
+                The system uses <strong>TF-IDF vectorization</strong> with 100,000 unigram and bigram features to convert
+                textual content into numerical feature vectors that machine learning models consume.
               </li>
               <li>
-                <strong>TF-IDF assigns higher importance</strong> to meaningful domain-specific words that are frequent
-                in the document yet comparatively rare across the broader corpus.
+                <strong>Three individual classifiers</strong> were evaluated on the held-out research test set:
+                Multinomial Naive Bayes (91.17% Macro F1), Logistic Regression (94.05% Macro F1), and LinearSVC (94.49% Macro F1).
               </li>
               <li>
-                A <strong>Naive Bayes classifier</strong> estimates probability distributions of words conditioned on each
-                document category learned during training.
+                <strong>Ensemble experiments</strong> (Soft Voting at 94.15% Macro F1 and Stacking at 94.47% Macro F1)
+                did not outperform the standalone LinearSVC baseline on the held-out test set.
               </li>
               <li>
-                The classifier predicts the <strong>most probable domain</strong> by combining those likelihoods with
-                priors, producing an interpretable label plus a confidence signal from class probabilities.
+                A <strong>LinearSVC classifier (C=0.5)</strong> evaluates maximum-margin decision hyperplanes learned
+                during training across all six domains and was selected as the final production inference model.
+              </li>
+              <li>
+                The classifier predicts the <strong>most decisive domain</strong> by comparing hyperplane distances,
+                producing an exact label plus an operational decision margin for uncertainty estimation.
               </li>
               <li>
                 After prediction, the <strong>FastAPI backend automatically sorts</strong> the uploaded file into the
@@ -211,10 +325,10 @@ function Home() {
                 </p>
               </div>
               <div>
-                <h3>Data mining lens</h3>
+                <h3>Machine learning lens</h3>
                 <p>
-                  Every upload exercises a full mining stack: selection, cleaning, transformation, modeling, and
-                  evaluation through confidence and lexical diagnostics surfaced on the results dashboard.
+                  Every upload exercises a full machine learning stack: selection, cleaning, transformation, modeling, and
+                  evaluation through margin and lexical diagnostics surfaced on the results dashboard.
                 </p>
               </div>
               <div>
@@ -234,7 +348,7 @@ function Home() {
           AI-powered cross-domain document classification and auto-sorting system for demos, vivas, and portfolio
           storytelling.
         </div>
-        <div>FastAPI backend · TF-IDF + Naive Bayes · Local folder organization · Smooth React UI</div>
+        <div>FastAPI backend · TF-IDF + LinearSVC · Local folder organization · Smooth React UI</div>
       </footer>
     </div>
   );

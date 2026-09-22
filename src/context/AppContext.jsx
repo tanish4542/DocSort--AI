@@ -14,35 +14,41 @@ const supportedMimeTypes = [
 ];
 
 const domainPalette = {
-  Medical: {
-    label: "Medical",
-    color: "#4f8cff",
-    soft: "rgba(79, 140, 255, 0.16)",
-    border: "rgba(79, 140, 255, 0.28)",
+  "Business and Finance": {
+    label: "Business and Finance",
+    color: "#10b981",
+    soft: "rgba(16, 185, 129, 0.16)",
+    border: "rgba(16, 185, 129, 0.32)",
   },
-  Technology: {
-    label: "Technology",
-    color: "#8b5cf6",
-    soft: "rgba(139, 92, 246, 0.16)",
-    border: "rgba(139, 92, 246, 0.28)",
-  },
-  Finance: {
-    label: "Finance",
-    color: "#2fbf71",
-    soft: "rgba(47, 191, 113, 0.16)",
-    border: "rgba(47, 191, 113, 0.28)",
+  "Medical Health": {
+    label: "Medical Health",
+    color: "#0ea5e9",
+    soft: "rgba(14, 165, 233, 0.16)",
+    border: "rgba(14, 165, 233, 0.32)",
   },
   Sports: {
     label: "Sports",
     color: "#f59e0b",
     soft: "rgba(245, 158, 11, 0.16)",
-    border: "rgba(245, 158, 11, 0.28)",
+    border: "rgba(245, 158, 11, 0.32)",
   },
-  Education: {
-    label: "Education",
-    color: "#facc15",
-    soft: "rgba(250, 204, 21, 0.18)",
-    border: "rgba(250, 204, 21, 0.34)",
+  "Technology & Computing": {
+    label: "Technology & Computing",
+    color: "#8b5cf6",
+    soft: "rgba(139, 92, 246, 0.16)",
+    border: "rgba(139, 92, 246, 0.32)",
+  },
+  Science: {
+    label: "Science",
+    color: "#f43f5e",
+    soft: "rgba(244, 63, 94, 0.16)",
+    border: "rgba(244, 63, 94, 0.32)",
+  },
+  Entertainment: {
+    label: "Entertainment",
+    color: "#d946ef",
+    soft: "rgba(217, 70, 239, 0.16)",
+    border: "rgba(217, 70, 239, 0.32)",
   },
   Unknown: {
     label: "Unknown",
@@ -50,82 +56,105 @@ const domainPalette = {
     soft: "rgba(100, 116, 139, 0.12)",
     border: "rgba(100, 116, 139, 0.22)",
   },
+  // Backward-compatible aliases
+  Finance: {
+    label: "Business and Finance",
+    color: "#10b981",
+    soft: "rgba(16, 185, 129, 0.16)",
+    border: "rgba(16, 185, 129, 0.32)",
+  },
+  Medical: {
+    label: "Medical Health",
+    color: "#0ea5e9",
+    soft: "rgba(14, 165, 233, 0.16)",
+    border: "rgba(14, 165, 233, 0.32)",
+  },
+  Technology: {
+    label: "Technology & Computing",
+    color: "#8b5cf6",
+    soft: "rgba(139, 92, 246, 0.16)",
+    border: "rgba(139, 92, 246, 0.32)",
+  },
+  Education: {
+    label: "Science",
+    color: "#f43f5e",
+    soft: "rgba(244, 63, 94, 0.16)",
+    border: "rgba(244, 63, 94, 0.32)",
+  },
 };
 
 const fallbackKeywordsByDomain = {
-  Medical: ["Diagnosis", "Patient", "Symptoms", "Treatment", "Clinical", "Healthcare", "Therapy"],
-  Finance: ["Revenue", "Investment", "Market", "Equity", "Portfolio", "Earnings", "Capital"],
-  Technology: ["Software", "API", "Cloud", "Deployment", "System", "Data", "Security"],
-  Sports: ["Team", "League", "Match", "Tournament", "Player", "Score", "Season"],
-  Education: ["Curriculum", "Learning", "Assessment", "Student", "Course", "Instruction", "Academic"],
+  "Business and Finance": ["Revenue", "Investment", "Market", "Equity", "Portfolio", "Earnings", "Capital", "Shares"],
+  "Medical Health": ["Diagnosis", "Patient", "Symptoms", "Treatment", "Clinical", "Healthcare", "Therapy", "Hospital"],
+  Sports: ["Team", "League", "Match", "Tournament", "Player", "Score", "Season", "Coach"],
+  "Technology & Computing": ["Software", "API", "Cloud", "Processor", "Programming", "Data", "Security", "Hardware"],
+  Science: ["Research", "Experiment", "Species", "Galaxy", "Physics", "Climate", "Laboratory", "Discovery"],
+  Entertainment: ["Film", "Music", "Actor", "Album", "Concert", "Series", "Box Office", "Festival"],
   Unknown: ["Document", "Text", "Classification", "Features", "Model", "Analysis"],
 };
 
 const detailedReasoningByDomain = {
-  Medical:
-    "The classifier detected strong medical terminology such as symptoms, diagnosis, treatment, patient, and clinical references. TF-IDF assigned higher weights to these healthcare-related terms because they appeared frequently within the uploaded document but less commonly across other domains. The Naive Bayes classifier then calculated a high probability match with the Medical category based on previously learned word distributions.",
-  Finance:
-    "The system identified financial terminology including investments, stocks, revenue, market trends, and economic references. TF-IDF emphasized these finance-specific keywords, allowing the Naive Bayes classifier to associate the document with the Finance domain using probabilistic classification.",
-  Technology:
-    "The classifier surfaced computing-oriented vocabulary such as software, systems, APIs, infrastructure, security, and engineering workflows. TF-IDF up-weighted these tokens relative to general-language terms, and the Naive Bayes model assigned the strongest posterior to the Technology class based on historical word likelihoods per category.",
+  "Business and Finance":
+    "The classifier detected salient financial signals including corporate revenue, capital markets, investment securities, and economic indicators. In the 100,000-dimensional TF-IDF vector space, positive linear coefficients mapped these terms to the Business and Finance hyperplane with decisive separation.",
+  "Medical Health":
+    "The document exhibited strong healthcare terminology including clinical diagnoses, treatments, patient care protocols, and pharmaceutical concepts. LinearSVC weights for Medical Health produced a strong positive decision score over competing categories.",
   Sports:
-    "The document exhibited recurring sports signals—teams, leagues, scores, tournaments, athletes, and season narratives. TF-IDF amplified these sport-specific tokens inside the sparse vector, and Naive Bayes matched the resulting pattern to the Sports domain with strong class-conditional support.",
-  Education:
-    "Academic cues including curriculum, pedagogy, assessments, students, instructors, and learning outcomes appeared consistently. TF-IDF increased salience for education-specific vocabulary, enabling the Naive Bayes classifier to favor the Education domain according to learned term frequencies.",
+    "Athletic competition signals—teams, match scores, leagues, players, and tournament narratives—dominated the document's TF-IDF profile, placing the feature vector well into the positive decision region for Sports.",
+  "Technology & Computing":
+    "Computing, software engineering, cloud architecture, hardware processors, and digital infrastructure tokens carried the largest positive feature attribution under the LinearSVC model weights for Technology & Computing.",
+  Science:
+    "Empirical methodology, scientific research terminology, astronomy, biodiversity, or physical sciences cues concentrated strongly in the extracted text, yielding the highest decision score for Science.",
+  Entertainment:
+    "Culture, cinematic productions, music releases, festival coverage, and celebrity media themes dominated the lexical representation, distinguishing this document cleanly under the Entertainment classifier.",
   Unknown:
-    "The model produced a label outside the primary domain taxonomy or confidence was ambiguous. Review the document language, ensure the training vocabulary covers this style of text, and consider re-uploading after verifying file integrity.",
+    "The model's decision scores were near the decision boundary or ambiguous across multiple categories. Manual review is recommended before sorting.",
 };
 
 const patternNotesByDomain = {
-  Medical: "Clinical lexicon and care-process wording dominated the token distribution compared with non-medical baselines.",
-  Finance: "Corporate finance and market lexicon appeared repeatedly, steering feature mass toward finance-oriented dimensions.",
-  Technology: "Technical implementation language outweighed generic prose, anchoring the vector toward engineering contexts.",
-  Sports: "Event- and competition-centric phrases clustered strongly, separating this text from non-sports corpora.",
-  Education: "Instructional and assessment vocabulary formed coherent clusters typical of learning materials.",
-  Unknown: "Lexical cues did not converge cleanly on a single domain signature; manual review is recommended.",
+  "Business and Finance": "Corporate finance, balance sheet metrics, and market commentary formed the primary token distribution.",
+  "Medical Health": "Care-delivery lexicon and clinical terminology dominated the token distribution relative to non-medical corpora.",
+  Sports: "Match statistics, team rosters, and competition narratives clustered strongly in the extracted text.",
+  "Technology & Computing": "Technical infrastructure, programming terminology, and software workflows anchored the vector.",
+  Science: "Hypothesis, research observations, and natural sciences vocabulary defined the feature pattern.",
+  Entertainment: "Performance arts, media distribution, and entertainment industry terms formed coherent lexical clusters.",
+  Unknown: "Lexical cues did not converge decisively on a single domain hyperplane.",
 };
 
 const tfidfNotesByDomain = {
-  Medical:
-    "Rare-but-meaningful medical stems received high TF-IDF scores, highlighting passages that differentiate clinical notes from everyday language.",
-  Finance:
-    "Market and accounting terms with high information gain were up-ranked, sharpening the contrast between finance and general news text.",
-  Technology:
-    "Product, stack, and operations terminology carried the largest TF-IDF mass, mirroring how technical docs differ from other genres.",
-  Sports:
-    "Team and fixture-specific tokens spiked in the weight vector, which is exactly how TF-IDF isolates sports reporting from other news.",
-  Education:
-    "Pedagogy- and outcomes-related stems dominated the weighted vector, aligning with syllabus-style writing patterns.",
-  Unknown: "TF-IDF weights were diffuse across many weak features, suggesting limited domain-specific concentration.",
+  "Business and Finance": "High-information financial n-grams received substantial sublinear TF-IDF weighting.",
+  "Medical Health": "Domain-specific medical tokens received strong TF-IDF weights that differentiate clinical text.",
+  Sports: "Tournament and sport-specific n-grams dominated the weighted feature vector.",
+  "Technology & Computing": "Software and system engineering n-grams carried the largest feature mass in the 100k vocabulary.",
+  Science: "Specialized scientific stems and multi-word n-grams produced elevated TF-IDF weights.",
+  Entertainment: "Creative industry phrases and media titles received high TF-IDF weighting.",
+  Unknown: "TF-IDF weights were evenly dispersed across multiple competing domain vocabularies.",
 };
 
-const nbNotesByDomain = {
-  Medical:
-    "Naive Bayes multiplied conditional word probabilities under the Medical class, yielding the highest posterior after comparing all trained categories.",
-  Finance:
-    "Class-conditional likelihoods for finance vocabulary outpaced other categories, so the argmax prediction selected Finance.",
-  Technology:
-    "Posterior scores favored Technology because token likelihoods under that class best explained the observed term multiset.",
-  Sports:
-    "Word likelihoods conditioned on Sports exceeded competing classes, driving the final argmax decision.",
-  Education:
-    "Education-specific likelihood products dominated the posterior, confirming the predicted Education label.",
-  Unknown: "Posteriors were comparatively flat; the reported label should be validated against your ground truth.",
+const svcNotesByDomain = {
+  "Business and Finance": "LinearSVC (C=0.5) hyperplane distance yielded a dominant positive decision score for Business and Finance.",
+  "Medical Health": "LinearSVC weights produced the maximum decision score for the Medical Health hyperplane.",
+  Sports: "LinearSVC hyperplane projection strongly separated the document into the Sports decision region.",
+  "Technology & Computing": "The Technology & Computing hyperplane evaluation yielded the highest decision score.",
+  Science: "LinearSVC decision function evaluated Science as the top-ranking category.",
+  Entertainment: "The Entertainment decision hyperplane separated this document with positive margin.",
+  Unknown: "LinearSVC decision margins between the top two classes fell below the high-confidence threshold.",
 };
 
 const aiSummaryByDomain = {
-  Medical:
-    "The uploaded document contained strong healthcare-oriented terminology and contextual patterns. After preprocessing and TF-IDF feature extraction, the Naive Bayes classifier predicted the Medical domain with elevated confidence. The backend then automatically organized the file into the corresponding local desktop folder.",
-  Finance:
-    "The document read like finance-focused material, with vocabulary tied to markets, performance, and capital structure. TF-IDF feature extraction surfaced those signals clearly, and Naive Bayes predicted Finance with strong support before the file was routed into the Finance directory on disk.",
-  Technology:
-    "Engineering and product language dominated the extracted text. Following token cleanup and TF-IDF vectorization, the Naive Bayes model classified the artifact as Technology and the server moved it into the Technology folder for traceable local storage.",
+  "Business and Finance":
+    "The uploaded document contains prominent financial and economic subject matter. After TF-IDF extraction across 100,000 features, the finalized LinearSVC model classified it into Business and Finance with clear decision margin.",
+  "Medical Health":
+    "The document features clinical, healthcare, or biomedical subject matter. Research LinearSVC inference classified it into Medical Health and routed it to local storage.",
   Sports:
-    "Sports-centric wording and event framing were prevalent throughout the upload. The pipeline applied standard NLP preprocessing, TF-IDF weighting, and Naive Bayes scoring to label the document as Sports, then persisted it under the Sports folder path returned to the UI.",
-  Education:
-    "Instructional vocabulary and learning-design cues were prominent. The classifier interpreted these patterns as Education after probabilistic analysis, and the workflow completed by sorting the file into the Education folder alongside other academic materials.",
+    "Sports journalism or athletic event coverage was detected throughout the text. The classifier routed the document to the Sports archive.",
+  "Technology & Computing":
+    "The text discusses computing, hardware, software, or digital systems. LinearSVC identified Technology & Computing as the top category.",
+  Science:
+    "Scientific research, natural phenomena, or academic investigation vocabulary was recognized. The document was categorized as Science.",
+  Entertainment:
+    "Arts, media, or entertainment narratives were recognized in the document text. The file was organized into Entertainment.",
   Unknown:
-    "The classifier returned an unexpected or low-confidence label relative to the tuned domain set. Inspect the document content and model training coverage, then re-run the upload to confirm routing and storage paths.",
+    "The document decision margin is close to the decision boundary. Please review the suggested categories.",
 };
 
 function normalizePrediction(prediction) {
@@ -136,13 +165,14 @@ function normalizePrediction(prediction) {
   const value = String(prediction).trim();
   const lower = value.toLowerCase();
 
-  if (lower.includes("med")) return "Medical";
-  if (lower.includes("tech")) return "Technology";
-  if (lower.includes("fin")) return "Finance";
+  if (lower.includes("bus") || lower.includes("fin")) return "Business and Finance";
+  if (lower.includes("med") || lower.includes("health")) return "Medical Health";
   if (lower.includes("sport")) return "Sports";
-  if (lower.includes("edu")) return "Education";
+  if (lower.includes("tech") || lower.includes("comput")) return "Technology & Computing";
+  if (lower.includes("sci")) return "Science";
+  if (lower.includes("entert")) return "Entertainment";
 
-  return value.charAt(0).toUpperCase() + value.slice(1);
+  return value;
 }
 
 function hydratePredictionFromStorage(stored) {
@@ -157,7 +187,7 @@ function hydratePredictionFromStorage(stored) {
 
 function mapApiResultToFrontend(payload, file) {
   const normalizedPrediction = normalizePrediction(
-    typeof payload === "object" ? payload?.prediction : payload
+    typeof payload === "object" ? payload?.prediction || payload?.predicted_class : payload
   );
 
   const rawKeywords =
@@ -167,13 +197,28 @@ function mapApiResultToFrontend(payload, file) {
   const fallbackKeywords =
     fallbackKeywordsByDomain[normalizedPrediction] || fallbackKeywordsByDomain.Unknown;
 
-  let confidence =
-    typeof payload === "object" && payload?.confidence != null && !Number.isNaN(Number(payload.confidence))
-      ? Number(payload.confidence)
+  const decisionMargin =
+    typeof payload === "object" && payload?.decision_margin != null
+      ? Number(payload.decision_margin)
       : null;
-  if (confidence == null) {
-    confidence = 76 + (String(file?.name || payload?.filename || "").length % 18);
-  }
+
+  const uncertaintyLevel =
+    typeof payload === "object" && payload?.uncertainty_level
+      ? String(payload.uncertainty_level)
+      : decisionMargin != null
+      ? decisionMargin >= 1.0
+        ? "High confidence"
+        : decisionMargin >= 0.5
+        ? "Moderate confidence"
+        : "Ambiguous"
+      : "Moderate confidence";
+
+  const decisionScores =
+    typeof payload === "object" && payload?.decision_scores
+      ? payload.decision_scores
+      : typeof payload === "object" && payload?.ranking
+      ? payload.ranking
+      : {};
 
   const requiresManualChoice = Boolean(
     typeof payload === "object" && payload?.requires_manual_choice
@@ -185,26 +230,74 @@ function mapApiResultToFrontend(payload, file) {
       ? payload.top_two_domains
       : [];
 
+  const textLength =
+    typeof payload === "object" && payload?.text_length != null
+      ? Number(payload.text_length)
+      : 0;
+
+  const isBlank = Boolean(typeof payload === "object" && payload?.is_blank);
+  const errorMessage = typeof payload === "object" && payload?.error ? String(payload.error) : "";
+
+  const modelComparison =
+    typeof payload === "object" && Array.isArray(payload?.model_comparison)
+      ? payload.model_comparison
+      : [];
+  const modelPerformance =
+    typeof payload === "object" && payload?.model_performance
+      ? payload.model_performance
+      : {};
+  const ensembleExperiments =
+    typeof payload === "object" && payload?.ensemble_experiments
+      ? payload.ensemble_experiments
+      : {};
+  const selectedModel =
+    (typeof payload === "object" && payload?.selected_model) || "LinearSVC";
+  const selectionReason =
+    (typeof payload === "object" && payload?.selection_reason) ||
+    "LinearSVC achieved the highest test Macro F1 (94.49%) among the evaluated individual classifiers.";
+
   const result = {
     filename: (typeof payload === "object" && payload?.filename) || file?.name || "document",
-    prediction: normalizedPrediction,
+    error: errorMessage,
+    isBlank,
+    prediction: isBlank ? null : normalizedPrediction,
+    predicted_class: isBlank ? null : normalizedPrediction,
+    finalPrediction: isBlank ? null : normalizedPrediction,
+    selectedModel,
+    selectionReason,
+    modelComparison: isBlank ? [] : modelComparison,
+    modelPerformance,
+    ensembleExperiments,
+    decisionMargin,
+    uncertaintyLevel: isBlank ? "Blank document" : uncertaintyLevel,
+    decisionScores: isBlank ? {} : decisionScores,
+    textLength,
     storedIn:
       typeof payload === "object" && payload?.stored_in != null ? String(payload.stored_in) : "",
     fileSize: file ? formatFileSize(file.size) : "",
     fileType: file ? getFileTypeLabel(file) : "Unknown",
     timestamp: Date.now(),
-    confidence,
-    keywords: rawKeywords.length ? rawKeywords : fallbackKeywords,
-    fallbackKeywords,
-    requiresManualChoice,
-    pendingId,
-    topTwoDomains,
-    detailedReasoning:
-      detailedReasoningByDomain[normalizedPrediction] || detailedReasoningByDomain.Unknown,
-    patternNote: patternNotesByDomain[normalizedPrediction] || patternNotesByDomain.Unknown,
-    tfidfNote: tfidfNotesByDomain[normalizedPrediction] || tfidfNotesByDomain.Unknown,
-    nbNote: nbNotesByDomain[normalizedPrediction] || nbNotesByDomain.Unknown,
-    aiSummary: aiSummaryByDomain[normalizedPrediction] || aiSummaryByDomain.Unknown,
+    confidence: isBlank ? null : decisionMargin,
+    keywords: isBlank ? [] : rawKeywords.length ? rawKeywords : fallbackKeywords,
+    fallbackKeywords: isBlank ? [] : fallbackKeywords,
+    requiresManualChoice: isBlank ? false : requiresManualChoice,
+    pendingId: isBlank ? null : pendingId,
+    topTwoDomains: isBlank ? [] : topTwoDomains,
+    detailedReasoning: isBlank
+      ? ""
+      : detailedReasoningByDomain[normalizedPrediction] || detailedReasoningByDomain.Unknown,
+    patternNote: isBlank
+      ? ""
+      : patternNotesByDomain[normalizedPrediction] || patternNotesByDomain.Unknown,
+    tfidfNote: isBlank
+      ? ""
+      : tfidfNotesByDomain[normalizedPrediction] || tfidfNotesByDomain.Unknown,
+    nbNote: isBlank
+      ? ""
+      : svcNotesByDomain[normalizedPrediction] || svcNotesByDomain.Unknown,
+    aiSummary: isBlank
+      ? ""
+      : aiSummaryByDomain[normalizedPrediction] || aiSummaryByDomain.Unknown,
   };
 
   return enrichStoredPrediction(result);
@@ -215,21 +308,66 @@ function enrichStoredPrediction(raw) {
     return null;
   }
 
-  const pred = normalizePrediction(raw.prediction);
+  if (raw.isBlank || raw.error) {
+    return {
+      ...raw,
+      prediction: null,
+      predicted_class: null,
+      finalPrediction: null,
+      error: raw.error || "This document appears to be blank or contains no readable text. Please upload a document with readable content.",
+      isBlank: true,
+      decisionMargin: null,
+      confidence: null,
+      uncertaintyLevel: "Blank document",
+      decisionScores: {},
+      keywords: [],
+      fallbackKeywords: [],
+      topTwoDomains: [],
+      modelComparison: [],
+      requiresManualChoice: false,
+      storedIn: null,
+    };
+  }
+
+  const pred = normalizePrediction(raw.prediction || raw.predicted_class);
   const fallbackKeywords = fallbackKeywordsByDomain[pred] || fallbackKeywordsByDomain.Unknown;
   const rawKw = Array.isArray(raw.keywords) ? raw.keywords.filter(Boolean).map(String) : [];
   const keywords = rawKw.length ? rawKw : fallbackKeywords;
 
-  let confidence =
-    raw.confidence != null && !Number.isNaN(Number(raw.confidence)) ? Number(raw.confidence) : null;
-  if (confidence == null) {
-    confidence = 76 + (String(raw.filename || "").length % 18);
-  }
+  const decisionMargin =
+    raw.decisionMargin != null && !Number.isNaN(Number(raw.decisionMargin))
+      ? Number(raw.decisionMargin)
+      : raw.confidence != null && !Number.isNaN(Number(raw.confidence)) && Number(raw.confidence) < 20
+      ? Number(raw.confidence)
+      : null;
+
+  const uncertaintyLevel =
+    raw.uncertaintyLevel ||
+    (decisionMargin != null
+      ? decisionMargin >= 1.0
+        ? "High confidence"
+        : decisionMargin >= 0.5
+        ? "Moderate confidence"
+        : "Ambiguous"
+      : "Moderate confidence");
 
   return {
     ...raw,
     prediction: pred,
-    confidence,
+    predicted_class: pred,
+    finalPrediction: raw.finalPrediction || pred,
+    selectedModel: raw.selectedModel || "LinearSVC",
+    selectionReason:
+      raw.selectionReason ||
+      "LinearSVC achieved the highest test Macro F1 (94.49%) among the evaluated individual classifiers.",
+    modelComparison: Array.isArray(raw.modelComparison) ? raw.modelComparison : [],
+    modelPerformance: raw.modelPerformance || {},
+    ensembleExperiments: raw.ensembleExperiments || {},
+    decisionMargin,
+    uncertaintyLevel,
+    decisionScores: raw.decisionScores || raw.ranking || {},
+    textLength: raw.textLength || 0,
+    confidence: decisionMargin,
     keywords,
     fallbackKeywords,
     requiresManualChoice: Boolean(raw.requiresManualChoice),
@@ -239,7 +377,7 @@ function enrichStoredPrediction(raw) {
       raw.detailedReasoning || detailedReasoningByDomain[pred] || detailedReasoningByDomain.Unknown,
     patternNote: raw.patternNote || patternNotesByDomain[pred] || patternNotesByDomain.Unknown,
     tfidfNote: raw.tfidfNote || tfidfNotesByDomain[pred] || tfidfNotesByDomain.Unknown,
-    nbNote: raw.nbNote || nbNotesByDomain[pred] || nbNotesByDomain.Unknown,
+    nbNote: raw.nbNote || svcNotesByDomain[pred] || svcNotesByDomain.Unknown,
     aiSummary: raw.aiSummary || aiSummaryByDomain[pred] || aiSummaryByDomain.Unknown,
   };
 }
@@ -365,7 +503,7 @@ function AppProvider({ children }) {
         throw new Error(message);
       }
 
-      const normalizedPrediction = normalizePrediction(payload?.prediction);
+      const normalizedPrediction = normalizePrediction(payload?.prediction || payload?.predicted_class);
       const displayName = payload?.filename ? String(payload.filename) : "";
 
       const applyConfirm = (prev) => {
@@ -378,10 +516,10 @@ function AppProvider({ children }) {
           ...prev,
           filename: displayName || prev?.filename,
           prediction: normalizedPrediction,
-          confidence:
-            payload?.confidence != null && !Number.isNaN(Number(payload.confidence))
-              ? Number(payload.confidence)
-              : 100,
+          predicted_class: normalizedPrediction,
+          decisionMargin: 10.0,
+          uncertaintyLevel: "User confirmed",
+          confidence: 10.0,
           storedIn: payload?.stored_in != null ? String(payload.stored_in) : "",
           requiresManualChoice: false,
           pendingId: null,
@@ -391,7 +529,7 @@ function AppProvider({ children }) {
             detailedReasoningByDomain[normalizedPrediction] || detailedReasoningByDomain.Unknown,
           patternNote: patternNotesByDomain[normalizedPrediction] || patternNotesByDomain.Unknown,
           tfidfNote: tfidfNotesByDomain[normalizedPrediction] || tfidfNotesByDomain.Unknown,
-          nbNote: nbNotesByDomain[normalizedPrediction] || nbNotesByDomain.Unknown,
+          nbNote: svcNotesByDomain[normalizedPrediction] || svcNotesByDomain.Unknown,
           aiSummary: aiSummaryByDomain[normalizedPrediction] || aiSummaryByDomain.Unknown,
           timestamp: Date.now(),
         });
@@ -480,6 +618,24 @@ function AppProvider({ children }) {
         throw new Error("No classification results returned from the server.");
       }
 
+      // If single file upload and it returned an error (such as blank file):
+      if (rows.length === 1 && (rows[0]?.error || rows[0]?.is_blank)) {
+        const errorText =
+          rows[0].error ||
+          "This document appears to be blank or contains no readable text. Please upload a document with readable content.";
+        setError(errorText);
+        throw new Error(errorText);
+      }
+
+      // If all files in a batch returned an error:
+      if (rows.every((r) => r?.error || r?.is_blank)) {
+        const errorText =
+          rows[0]?.error ||
+          "This document appears to be blank or contains no readable text. Please upload a document with readable content.";
+        setError(errorText);
+        throw new Error(errorText);
+      }
+
       const enrichedList = rows.map((row, index) => {
         const file =
           files.find((f) => f.name === row?.filename) ||
@@ -492,7 +648,7 @@ function AppProvider({ children }) {
       setPrediction(finalPrediction);
 
       const historyEntries = enrichedList
-        .filter((item) => !item.requiresManualChoice)
+        .filter((item) => !item.requiresManualChoice && !item.isBlank && item.prediction)
         .map((item) => ({
           filename: item.filename,
           prediction: item.prediction,

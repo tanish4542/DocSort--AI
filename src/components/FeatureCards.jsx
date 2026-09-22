@@ -2,7 +2,7 @@ import React from "react";
 
 const features = [
   {
-    title: " Classification",
+    title: "Machine Learning Classification",
     text: "Uses backend predictions to map each document to the best-fit domain category.",
   },
   {
@@ -11,7 +11,7 @@ const features = [
   },
   {
     title: "Multi-Domain Support",
-    text: "Handles Medical, Technology, Finance, Sports, and Education with clear labels.",
+    text: "Handles Business and Finance, Medical Health, Sports, Technology & Computing, Science, and Entertainment.",
   },
   {
     title: "PDF / DOCX / TXT Support",

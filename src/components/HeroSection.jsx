@@ -1,7 +1,7 @@
 import React from "react";
 
 const floatingCards = [
-  { label: "Domains", value: "4" },
+  { label: "Domains", value: "6" },
   { label: "Formats", value: "PDF / DOCX / TXT" },
   { label: "Sorting", value: "Local folders" },
 ];

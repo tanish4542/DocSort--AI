@@ -55,7 +55,7 @@ function PageShell({ history, isBulk, results, domainPalette, onUploadAnother, o
             <span className="eyebrow">Analysis dashboard</span>
             <h1>Intelligent classification &amp; storage report</h1>
             <p>
-              Explore prediction confidence, lexical drivers, data-mining operations, and the exact filesystem destination
+              Explore multi-model evaluation benchmarks, LinearSVC prediction confidence, lexical drivers, and the exact filesystem destination
               produced by the FastAPI service.
             </p>
           </div>
