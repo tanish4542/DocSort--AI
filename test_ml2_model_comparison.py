@@ -203,7 +203,13 @@ def test_controlled_pdf_prediction(doc_info):
     # 6. Existing decision margin and XAI functionality intact
     assert data.get("decision_margin") is not None
     assert isinstance(data.get("decision_margin"), (int, float))
-    assert data.get("uncertainty_level") in ["High confidence", "Moderate confidence", "Ambiguous"]
+    assert data.get("uncertainty_level") in [
+        "High confidence",
+        "Moderate confidence",
+        "Ambiguous",
+        "Ambiguous — Manual Review Recommended",
+        "Very low confidence / Needs Review",
+    ]
     assert len(data.get("decision_scores", {})) == 6
     assert len(data.get("top_keywords", [])) > 0
 
@@ -307,6 +313,100 @@ def test_bulk_predict_multi_models():
         assert len(item.get("model_comparison", [])) == 3
         assert item.get("final_prediction") == item.get("prediction")
         assert "test_macro_f1" in item["model_comparison"][0]
+
+
+# =====================================================================
+# 5. OUT-OF-DOMAIN & LOW-MARGIN UNCERTAINTY HANDLING TESTS
+# =====================================================================
+
+def test_sister_biodata_manvi_low_margin_review():
+    """
+    Test Case C: Sister's biodata (MANVI_BIODATA.pdf).
+    - LinearSVC technical margin is ~0.39 (0.25 <= margin < 0.50).
+    - Must NOT be automatically sorted into Science!
+    - Stored path must be None.
+    - Status must be 'Manual Review Required'.
+    - requires_manual_choice must be True.
+    """
+    biodata_path = Path("test_assets/MANVI_BIODATA.pdf")
+    assert biodata_path.exists(), "MANVI_BIODATA.pdf must exist in test_assets"
+
+    with open(biodata_path, "rb") as f:
+        res = client.post("/predict", files={"file": ("MANVI_BIODATA.pdf", f, "application/pdf")})
+
+    assert res.status_code == 200
+    data = res.json()
+
+    # 1. Technical prediction is Science, but it is unconfirmed
+    assert data.get("prediction") == "Science"
+    assert data.get("raw_prediction") == "Science"
+
+    # 2. Decision margin is ~0.39 (< 0.50 operational threshold)
+    margin = data.get("decision_margin")
+    assert margin is not None
+    assert 0.25 <= margin < 0.50
+
+    # 3. Must NOT be automatically sorted into Science
+    assert data.get("stored_in") is None
+    assert data.get("requires_manual_choice") is True
+    assert data.get("status") == "Manual Review Required"
+    assert "Ambiguous" in data.get("uncertainty_level", "")
+    assert data.get("pending_id") is not None
+
+    # 4. Out-of-domain and low-margin explanations present
+    assert "uncertain" in data.get("explanation", "").lower()
+    assert "closed experimental taxonomy" in data.get("research_distinction", "").lower()
+
+
+def test_very_low_margin_ood_miscellaneous():
+    """
+    Test Case D: Very-low-margin / OOD document (margin < 0.25).
+    - Controlled document outside research domains.
+    - Must automatically route to ~/Desktop/SortedDocuments/Miscellaneous/.
+    - Label must be 'Miscellaneous / Needs Review'.
+    """
+    ood_path = Path("test_assets/ood_miscellaneous_doc.pdf")
+    assert ood_path.exists(), "ood_miscellaneous_doc.pdf must exist in test_assets"
+
+    with open(ood_path, "rb") as f:
+        res = client.post("/predict", files={"file": ("ood_miscellaneous_doc.pdf", f, "application/pdf")})
+
+    assert res.status_code == 200
+    data = res.json()
+
+    # Margin must be below 0.25
+    margin = data.get("decision_margin")
+    assert margin is not None
+    assert margin < 0.25
+
+    # Routing to Miscellaneous / Needs Review
+    assert data.get("prediction") == "Miscellaneous / Needs Review"
+    assert data.get("final_prediction") == "Miscellaneous / Needs Review"
+    assert data.get("is_miscellaneous") is True
+    assert data.get("requires_manual_choice") is False
+    assert data.get("stored_in") is not None
+    assert "Miscellaneous" in data.get("stored_in", "")
+    assert "falls outside the confidently supported research domains" in data.get("explanation", "")
+
+
+def test_confirm_sort_to_miscellaneous():
+    """Verify staged ambiguous document can be confirmed into Miscellaneous."""
+    biodata_path = Path("test_assets/MANVI_BIODATA.pdf")
+    with open(biodata_path, "rb") as f:
+        res = client.post("/predict", files={"file": ("MANVI_BIODATA.pdf", f, "application/pdf")})
+
+    data = res.json()
+    pending_id = data.get("pending_id")
+    assert pending_id is not None
+
+    # User confirms routing to Miscellaneous / Needs Review
+    confirm_res = client.post("/confirm-sort", json={"pending_id": pending_id, "chosen_domain": "Miscellaneous / Needs Review"})
+    assert confirm_res.status_code == 200
+    cdata = confirm_res.json()
+
+    assert cdata.get("prediction") == "Miscellaneous / Needs Review"
+    assert "Miscellaneous" in cdata.get("stored_in", "")
+    assert os.path.isfile(cdata.get("stored_in"))
 
 
 if __name__ == "__main__":

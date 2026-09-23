@@ -14,6 +14,10 @@ function fileNameOnly(name) {
   return parts[parts.length - 1] || name;
 }
 
+// Configurable operational threshold constants (matching backend)
+const VERY_LOW_MARGIN = 0.25;
+const LOW_MARGIN_THRESHOLD = 0.50;
+
 function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
   const { confirmManualSort, domainPalette } = useAppState();
   const [choiceError, setChoiceError] = useState("");
@@ -25,21 +29,34 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
       ? Number(result.decisionMargin)
       : null;
 
+  const isVeryLowMargin =
+    result?.isMiscellaneous ||
+    result?.prediction === "Miscellaneous / Needs Review" ||
+    (decisionMargin != null && decisionMargin < VERY_LOW_MARGIN);
+
+  const isAmbiguous =
+    !isVeryLowMargin &&
+    (result?.uncertaintyLevel?.toLowerCase().includes("ambiguous") ||
+      result?.status === "Manual Review Required" ||
+      (decisionMargin != null && decisionMargin < LOW_MARGIN_THRESHOLD));
+
+  const needsChoice = Boolean(
+    (result?.requiresManualChoice && result?.pendingId) ||
+      (isAmbiguous && result?.pendingId)
+  );
+
   const uncertaintyLevel =
     result?.uncertaintyLevel ||
     (decisionMargin != null
       ? decisionMargin >= 1.0
         ? "High confidence"
-        : decisionMargin >= 0.5
+        : decisionMargin >= LOW_MARGIN_THRESHOLD
         ? "Moderate confidence"
-        : "Ambiguous"
+        : decisionMargin >= VERY_LOW_MARGIN
+        ? "Ambiguous — Manual Review Recommended"
+        : "Very low confidence / Needs Review"
       : "Moderate confidence");
 
-  const isAmbiguous =
-    uncertaintyLevel.toLowerCase().includes("ambiguous") ||
-    (decisionMargin != null && decisionMargin < 0.5);
-
-  const needsChoice = Boolean(result?.requiresManualChoice && result?.pendingId);
   const candidates = Array.isArray(result?.topTwoDomains) ? result.topTwoDomains : [];
 
   const keywords = useMemo(() => {
@@ -47,7 +64,10 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
     return raw.slice(0, 14);
   }, [result]);
 
-  const folderName = useMemo(() => folderLabelFromPath(result?.storedIn), [result?.storedIn]);
+  const folderName = useMemo(() => {
+    if (isVeryLowMargin) return "Miscellaneous";
+    return folderLabelFromPath(result?.storedIn);
+  }, [result?.storedIn, isVeryLowMargin]);
 
   // Decision scores list sorted descending
   const sortedScores = useMemo(() => {
@@ -65,10 +85,11 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
     if (Array.isArray(result?.modelComparison) && result.modelComparison.length > 0) {
       return result.modelComparison;
     }
+    const technicalPrediction = result?.rawPrediction || result?.prediction || "—";
     return [
       {
         model: "Multinomial Naive Bayes",
-        prediction: result?.prediction || "—",
+        prediction: technicalPrediction,
         score: null,
         score_type: "Probability",
         score_display: "Probability score",
@@ -78,7 +99,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
       },
       {
         model: "Logistic Regression",
-        prediction: result?.prediction || "—",
+        prediction: technicalPrediction,
         score: null,
         score_type: "Probability",
         score_display: "Probability score",
@@ -88,7 +109,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
       },
       {
         model: "LinearSVC",
-        prediction: result?.prediction || "—",
+        prediction: technicalPrediction,
         score: decisionMargin,
         score_type: "Decision Score",
         score_display: decisionMargin != null ? `Decision margin: ${decisionMargin.toFixed(2)}` : "—",
@@ -99,7 +120,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
         is_selected: true,
       },
     ];
-  }, [result?.modelComparison, result?.prediction, decisionMargin, uncertaintyLevel]);
+  }, [result?.modelComparison, result?.prediction, result?.rawPrediction, decisionMargin, uncertaintyLevel]);
 
   const handlePickDomain = async (domain) => {
     setChoiceError("");
@@ -124,7 +145,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
             {result.error || "This document appears to be blank or contains no readable text. Please upload a document with readable content."}
           </p>
           <p className="validationErrorCard__details">
-            File: <strong>{result.filename || "Uploaded document"}</strong> — No readable text was detected. The document was not submitted to the machine learning classifier and was not sorted into any folder.
+            File: <strong>{result.filename || "Uploaded document"}</strong> — No readable text was detected. The document was not submitted to the machine learning classifier and was not sorted into any folder. Blank documents are rejected before inference and are not sorted into Miscellaneous.
           </p>
           <div className="resultDashboard__actions" style={{ marginTop: "24px" }}>
             <button className="button button--primary" type="button" onClick={onUploadAnother}>
@@ -155,27 +176,44 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
           </div>
 
           <div className="docResultHeader__predictionInfo">
-            <span className="docResultHeader__catLabel">Predicted Category</span>
+            <span className="docResultHeader__catLabel">
+              {isVeryLowMargin
+                ? "Classification Status"
+                : isAmbiguous
+                ? "Predicted Category (Unconfirmed)"
+                : "Predicted Category"}
+            </span>
             <div className="docResultHeader__pillWrap">
-              <span
-                className="resultPill resultPill--large"
-                style={{
-                  background: theme.soft,
-                  borderColor: theme.border,
-                  color: theme.color,
-                }}
-              >
-                {result.prediction}
-              </span>
+              {isVeryLowMargin ? (
+                <span className="resultPill resultPill--large resultPill--misc">
+                  Miscellaneous / Needs Review
+                </span>
+              ) : (
+                <span
+                  className="resultPill resultPill--large"
+                  style={{
+                    background: theme.soft,
+                    borderColor: theme.border,
+                    color: theme.color,
+                  }}
+                >
+                  {result.prediction}
+                </span>
+              )}
             </div>
           </div>
 
           <div className="docResultHeader__statusWrap">
             <span className="docResultHeader__statusLabel">Sorting Status</span>
-            {needsChoice ? (
+            {isVeryLowMargin ? (
+              <span className="docResultHeader__status docResultHeader__status--misc">
+                <span className="statusDot statusDot--misc" aria-hidden="true" />
+                Separated into Miscellaneous (Low-Margin Fallback)
+              </span>
+            ) : isAmbiguous ? (
               <span className="docResultHeader__status docResultHeader__status--pending">
                 <span className="statusDot statusDot--pending" aria-hidden="true" />
-                Pending Review (Ambiguous Margin)
+                Manual Review Required (Margin {decisionMargin != null ? decisionMargin.toFixed(2) : "—"} &lt; 0.50)
               </span>
             ) : (
               <span className="docResultHeader__status docResultHeader__status--success">
@@ -286,6 +324,13 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
           </p>
         </div>
 
+        {/* RESEARCH TAXONOMY & OUT-OF-DOMAIN HANDLING CALLOUT */}
+        <div className="taxonomyDistinctionCallout">
+          <p>
+            <strong>Research Taxonomy &amp; Out-of-Domain Notice:</strong> The six research categories form a closed experimental taxonomy. Real-world documents (such as resumes, personal biodata, or administrative records) may fall outside these categories. The application therefore uses low-margin uncertainty handling to avoid forcing uncertain documents into an unrelated class.
+          </p>
+        </div>
+
         {/* ENSEMBLE EXPERIMENTS SUBSECTION */}
         <div className="ensembleSubsection">
           <div className="ensembleSubsection__head">
@@ -357,33 +402,79 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
 
       {/* 3. FINAL PREDICTION SECTION */}
       <section className="finalPredictionSection">
-        <article
-          className="resultHeroCard cardRise"
-          style={{ "--accent": theme.color, "--accentSoft": theme.soft, "--accentBorder": theme.border }}
-        >
-          <div className="resultHeroCard__glow" aria-hidden="true" />
-          <div className="resultHeroCard__inner">
+        {isVeryLowMargin ? (
+          /* CASE 1: VERY LOW MARGIN (< 0.25) -> MISCELLANEOUS / NEEDS REVIEW */
+          <article className="resultHeroCard resultHeroCard--misc cardRise">
             <div className="resultHeroCard__top">
-              <span className="eyebrow">Final Prediction · Selected Model</span>
-              <span className="resultPill resultPill--large">{theme.label}</span>
-              {needsChoice ? (
-                <span className="resultHeroCard__success resultHeroCard__success--pending">
-                  <span className="resultHeroCard__successDot" aria-hidden="true" />
-                  Ambiguous margin — manual review recommended
-                </span>
-              ) : (
-                <span className="resultHeroCard__success">
-                  <span className="resultHeroCard__successDot" aria-hidden="true" />
-                  Success — file organized automatically
-                </span>
+              <span className="eyebrow eyebrow--misc">Application Fallback</span>
+              <span className="resultPill resultPill--large resultPill--misc">Miscellaneous / Needs Review</span>
+              <span className="resultHeroCard__statusTag resultHeroCard__statusTag--misc">
+                Auto-separated into Miscellaneous
+              </span>
+            </div>
+
+            <p className="resultHeroCard__domainLabel">Fallback Category</p>
+            <h2 className="resultHeroCard__domainTitle" style={{ color: "#334155" }}>
+              Miscellaneous / Needs Review
+            </h2>
+
+            <div className="lowConfidenceNotice lowConfidenceNotice--misc">
+              <p>
+                <strong>Out-of-Domain Notice:</strong> This document falls outside the confidently supported research domains or has insufficient classification evidence. It has been separated into <code>~/Desktop/SortedDocuments/Miscellaneous/</code> rather than automatically assigned to a research category.
+              </p>
+              {result.rawPrediction && (
+                <p style={{ marginTop: "6px", fontSize: "0.86rem", color: "#64748b" }}>
+                  Closest technical classifier hyperplane: <strong>{result.rawPrediction}</strong> (Decision margin: {decisionMargin != null ? decisionMargin.toFixed(2) : "—"} &lt; 0.25).
+                </p>
               )}
             </div>
 
-            <p className="resultHeroCard__domainLabel">Final Category Decision</p>
+            <div className="resultHeroMetaGrid">
+              <div className="resultHeroMeta">
+                <span>Routing Engine</span>
+                <strong>LinearSVC Fallback</strong>
+              </div>
+              <div className="resultHeroMeta">
+                <span>File Name</span>
+                <strong title={result.filename}>{fileNameOnly(result.filename)}</strong>
+              </div>
+              <div className="resultHeroMeta">
+                <span>Decision Margin</span>
+                <strong>{decisionMargin != null ? decisionMargin.toFixed(2) : "—"}</strong>
+              </div>
+              <div className="resultHeroMeta">
+                <span>Operational Status</span>
+                <strong>Very low margin (&lt; 0.25)</strong>
+              </div>
+            </div>
+          </article>
+        ) : isAmbiguous ? (
+          /* CASE 2: AMBIGUOUS MARGIN (0.25 <= margin < 0.50) e.g. MANVI_BIODATA.pdf */
+          <article
+            className="resultHeroCard resultHeroCard--ambiguous cardRise"
+            style={{ "--accent": "#d97706", "--accentSoft": "rgba(217, 119, 6, 0.14)", "--accentBorder": "rgba(217, 119, 6, 0.35)" }}
+          >
+            <div className="resultHeroCard__top">
+              <span className="eyebrow eyebrow--warning">Manual Review Recommended</span>
+              <span className="resultPill resultPill--large" style={{ background: theme.soft, borderColor: theme.border, color: theme.color }}>
+                {result.prediction}
+              </span>
+              <span className="resultHeroCard__statusTag resultHeroCard__statusTag--pending">
+                <span className="statusDot statusDot--pending" aria-hidden="true" />
+                Manual Review Required
+              </span>
+            </div>
+
+            <p className="resultHeroCard__domainLabel">Predicted Category (Unconfirmed)</p>
             <h2 className="resultHeroCard__domainTitle">{result.prediction}</h2>
 
-            <div className="selectionReasonText">
-              <strong>Why LinearSVC?</strong> LinearSVC achieved the highest test Macro F1 (94.49%) among the evaluated individual classifiers.
+            <div className="lowConfidenceNotice">
+              <p>
+                <strong>Uncertainty Notice:</strong> Research classifier is uncertain. The document does not have sufficient evidence for automatic sorting (decision margin {decisionMargin != null ? decisionMargin.toFixed(2) : "—"} &lt; 0.50 threshold).
+              </p>
+              <p style={{ marginTop: "4px", fontSize: "0.86rem", color: "#92400e" }}>
+                This file was staged for review and has <strong>not</strong> been automatically placed into <code>{result.prediction}</code>.
+              </p>
             </div>
 
             <div className="resultHeroMetaGrid">
@@ -400,14 +491,58 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
                 <strong>{decisionMargin != null ? decisionMargin.toFixed(2) : "—"}</strong>
               </div>
               <div className="resultHeroMeta">
-                <span>Uncertainty Level</span>
-                <strong>{uncertaintyLevel}</strong>
+                <span>Status</span>
+                <strong style={{ color: "#d97706" }}>Manual Review Required</strong>
               </div>
             </div>
-          </div>
-        </article>
+          </article>
+        ) : (
+          /* CASE 3: HIGH / MODERATE CONFIDENCE (margin >= 0.50) */
+          <article
+            className="resultHeroCard cardRise"
+            style={{ "--accent": theme.color, "--accentSoft": theme.soft, "--accentBorder": theme.border }}
+          >
+            <div className="resultHeroCard__glow" aria-hidden="true" />
+            <div className="resultHeroCard__inner">
+              <div className="resultHeroCard__top">
+                <span className="eyebrow">Final Prediction · Selected Model</span>
+                <span className="resultPill resultPill--large">{theme.label}</span>
+                <span className="resultHeroCard__success">
+                  <span className="resultHeroCard__successDot" aria-hidden="true" />
+                  Success — file organized automatically
+                </span>
+              </div>
 
-        {/* 4. DECISION MARGIN / UNCERTAINTY */}
+              <p className="resultHeroCard__domainLabel">Final Category Decision</p>
+              <h2 className="resultHeroCard__domainTitle">{result.prediction}</h2>
+
+              <div className="selectionReasonText">
+                <strong>Why LinearSVC?</strong> LinearSVC achieved the highest test Macro F1 (94.49%) among the evaluated individual classifiers.
+              </div>
+
+              <div className="resultHeroMetaGrid">
+                <div className="resultHeroMeta">
+                  <span>Selected Model</span>
+                  <strong>LinearSVC (C=0.5)</strong>
+                </div>
+                <div className="resultHeroMeta">
+                  <span>File Name</span>
+                  <strong title={result.filename}>{fileNameOnly(result.filename)}</strong>
+                </div>
+                <div className="resultHeroMeta">
+                  <span>Decision Margin</span>
+                  <strong>{decisionMargin != null ? decisionMargin.toFixed(2) : "—"}</strong>
+                </div>
+                <div className="resultHeroMeta">
+                  <span>Uncertainty Level</span>
+                  <strong>{uncertaintyLevel}</strong>
+                </div>
+              </div>
+            </div>
+          </article>
+        )}
+
+        {/* 4. DECISION MARGIN / UNCERTAINTY PANEL */}
         <section className="confidencePanel cardRise">
           <div className="confidencePanel__head">
             <span className="eyebrow">Model Decision Certainty</span>
@@ -417,10 +552,18 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
               </strong>
               <span
                 className={`confidencePanel__label ${
-                  isAmbiguous ? "confidencePanel__label--ambiguous" : "confidencePanel__label--confident"
+                  isVeryLowMargin
+                    ? "confidencePanel__label--misc"
+                    : isAmbiguous
+                    ? "confidencePanel__label--ambiguous"
+                    : "confidencePanel__label--confident"
                 }`}
               >
-                {isAmbiguous ? "Ambiguous — manual review recommended" : uncertaintyLevel}
+                {isVeryLowMargin
+                  ? "Very low margin — routed to Miscellaneous"
+                  : isAmbiguous
+                  ? "Ambiguous — manual review required"
+                  : uncertaintyLevel}
               </span>
             </div>
           </div>
@@ -430,8 +573,10 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
             <div
               className="marginMeter__bar"
               style={{
-                width: `${Math.min(100, Math.max(12, ((decisionMargin || 0) / 3.0) * 100))}%`,
-                background: isAmbiguous
+                width: `${Math.min(100, Math.max(8, ((decisionMargin || 0) / 3.0) * 100))}%`,
+                background: isVeryLowMargin
+                  ? "linear-gradient(90deg, #94a3b8, #64748b)"
+                  : isAmbiguous
                   ? "linear-gradient(90deg, #f59e0b, #ef4444)"
                   : `linear-gradient(90deg, var(--teal), ${theme.color})`,
               }}
@@ -440,18 +585,73 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
 
           <div className="marginScaleLegend">
             <span>0.0 (Boundary)</span>
-            <span>0.5 (Moderate)</span>
+            <span style={{ color: "#64748b" }}>0.25 (Misc Fallback)</span>
+            <span style={{ color: "#d97706" }}>0.50 (Review Threshold)</span>
             <span>1.0+ (High Separation)</span>
           </div>
 
           <p className="confidencePanel__hint">
-            {needsChoice
-              ? "Decision margin between top-1 and runner-up is below 0.50. Select one of the two closest categories below to finalize folder sorting."
+            {isVeryLowMargin
+              ? "Decision margin is below 0.25. The research classifier does not have sufficient evidence for any research domain. The file was separated into Miscellaneous / Needs Review."
+              : isAmbiguous
+              ? "Decision margin between top-1 and runner-up is below 0.50. The application prevents automatic sorting into unconfirmed research categories. Select an option below to confirm."
               : "Decision margin represents the separation between highest and second-highest LinearSVC hyperplane scores (top - second). These are operational decision-margin thresholds, not calibrated probabilities."}
           </p>
         </section>
 
-        {/* 5. MODEL DECISION SCORES ACROSS ALL 6 DOMAINS */}
+        {/* 5. CLOSEST RESEARCH CATEGORIES / MANUAL REVIEW UI */}
+        {needsChoice && (
+          <section className="manualChoiceCard cardRise" id="manual-review">
+            <span className="eyebrow eyebrow--warning">User Review Required</span>
+            <h3>Closest Research Categories</h3>
+            <p>
+              Research classifier is uncertain (margin {decisionMargin != null ? decisionMargin.toFixed(2) : "—"} &lt; 0.50).
+              Choose the appropriate destination or route to Miscellaneous:
+            </p>
+
+            <div className="candidateButtonsRow">
+              {candidates.map((cand) => {
+                const candTheme = domainPalette[cand.domain] || domainPalette.Unknown;
+                return (
+                  <button
+                    key={cand.domain}
+                    className="button button--candidate"
+                    type="button"
+                    disabled={choiceBusy}
+                    onClick={() => handlePickDomain(cand.domain)}
+                    style={{
+                      borderColor: candTheme.border,
+                      background: candTheme.soft,
+                      color: candTheme.color,
+                    }}
+                  >
+                    <strong>Sort into {cand.domain}</strong>
+                    <small>LinearSVC Score: {cand.score.toFixed(4)}</small>
+                  </button>
+                );
+              })}
+
+              {/* Explicit option to route to Miscellaneous / Needs Review */}
+              <button
+                className="button button--candidate button--candidateMisc"
+                type="button"
+                disabled={choiceBusy}
+                onClick={() => handlePickDomain("Miscellaneous / Needs Review")}
+              >
+                <strong>Route to Miscellaneous / Needs Review</strong>
+                <small>Application fallback for out-of-domain documents</small>
+              </button>
+            </div>
+
+            {choiceError && (
+              <p className="choiceError" role="alert">
+                {choiceError}
+              </p>
+            )}
+          </section>
+        )}
+
+        {/* 6. MODEL DECISION SCORES ACROSS ALL 6 DOMAINS */}
         <section className="decisionScoresPanel cardRise">
           <div
             className="decisionScoresPanel__header"
@@ -519,46 +719,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
           )}
         </section>
 
-        {/* 6. SORTING RESULT / LOCAL STORAGE */}
-        {needsChoice && (
-          <section className="manualChoiceCard cardRise">
-            <span className="eyebrow">User Review Required</span>
-            <h3>Confirm Document Destination</h3>
-            <p>
-              Decision scores for the top two categories are close (margin &lt; 0.50). Choose the most accurate domain:
-            </p>
-
-            <div className="candidateButtonsRow">
-              {candidates.map((cand) => {
-                const candTheme = domainPalette[cand.domain] || domainPalette.Unknown;
-                return (
-                  <button
-                    key={cand.domain}
-                    className="button button--candidate"
-                    type="button"
-                    disabled={choiceBusy}
-                    onClick={() => handlePickDomain(cand.domain)}
-                    style={{
-                      borderColor: candTheme.border,
-                      background: candTheme.soft,
-                      color: candTheme.color,
-                    }}
-                  >
-                    <strong>Sort into {cand.domain}</strong>
-                    <small>LinearSVC Score: {cand.score.toFixed(4)}</small>
-                  </button>
-                );
-              })}
-            </div>
-
-            {choiceError && (
-              <p className="choiceError" role="alert">
-                {choiceError}
-              </p>
-            )}
-          </section>
-        )}
-
+        {/* 7. SORTING RESULT / LOCAL STORAGE */}
         {result.storedIn && (
           <section className="storagePanel cardRise">
             <span className="eyebrow">Local storage</span>
@@ -570,7 +731,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
           </section>
         )}
 
-        {/* 7. XAI / LINEAR FEATURE ATTRIBUTION */}
+        {/* 8. XAI / LINEAR FEATURE ATTRIBUTION */}
         <section className="keywordPanel cardRise">
           <div className="keywordPanel__head">
             <span className="eyebrow">Linear Feature Attribution</span>
@@ -610,7 +771,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
         </div>
       </section>
 
-      {/* 8. ACTIONS */}
+      {/* ACTIONS */}
       <div className="resultDashboard__actions">
         <button className="button button--primary" type="button" onClick={onUploadAnother}>
           Upload Another File

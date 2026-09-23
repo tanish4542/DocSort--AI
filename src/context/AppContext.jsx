@@ -56,6 +56,18 @@ const domainPalette = {
     soft: "rgba(100, 116, 139, 0.12)",
     border: "rgba(100, 116, 139, 0.22)",
   },
+  "Miscellaneous / Needs Review": {
+    label: "Miscellaneous / Needs Review",
+    color: "#64748b",
+    soft: "rgba(100, 116, 139, 0.16)",
+    border: "rgba(100, 116, 139, 0.35)",
+  },
+  Miscellaneous: {
+    label: "Miscellaneous / Needs Review",
+    color: "#64748b",
+    soft: "rgba(100, 116, 139, 0.16)",
+    border: "rgba(100, 116, 139, 0.35)",
+  },
   // Backward-compatible aliases
   Finance: {
     label: "Business and Finance",
@@ -165,6 +177,7 @@ function normalizePrediction(prediction) {
   const value = String(prediction).trim();
   const lower = value.toLowerCase();
 
+  if (lower.includes("misc") || lower.includes("review")) return "Miscellaneous / Needs Review";
   if (lower.includes("bus") || lower.includes("fin")) return "Business and Finance";
   if (lower.includes("med") || lower.includes("health")) return "Medical Health";
   if (lower.includes("sport")) return "Sports";
@@ -283,6 +296,11 @@ function mapApiResultToFrontend(payload, file) {
     requiresManualChoice: isBlank ? false : requiresManualChoice,
     pendingId: isBlank ? null : pendingId,
     topTwoDomains: isBlank ? [] : topTwoDomains,
+    isMiscellaneous: Boolean(typeof payload === "object" && payload?.is_miscellaneous),
+    rawPrediction: (typeof payload === "object" && payload?.raw_prediction) || normalizedPrediction,
+    status: (typeof payload === "object" && payload?.status) || (isBlank ? "Rejected" : "Organized Automatically"),
+    explanation: (typeof payload === "object" && payload?.explanation) || "",
+    researchDistinction: (typeof payload === "object" && payload?.research_distinction) || "",
     detailedReasoning: isBlank
       ? ""
       : detailedReasoningByDomain[normalizedPrediction] || detailedReasoningByDomain.Unknown,

@@ -46,9 +46,11 @@ LR_PATH = RESEARCH_MODELS_DIR / "logistic_regression.joblib"
 # Operational uncertainty thresholds for LinearSVC (Not calibrated probabilities)
 # margin >= 1.0  -> High confidence
 # 0.5 <= margin < 1.0 -> Moderate confidence
-# margin < 0.5  -> Ambiguous (manual review recommended)
+# 0.25 <= margin < 0.5 -> Ambiguous — Manual Review Recommended
+# margin < 0.25 -> Very low confidence / Needs Review (auto-routes to Miscellaneous)
 THRESHOLD_HIGH = 1.0
-THRESHOLD_MODERATE = 0.5
+THRESHOLD_MODERATE = 0.50
+VERY_LOW_MARGIN = 0.25
 
 # Validation: ensure files exist
 for artifact_path, name in [
@@ -137,8 +139,10 @@ def compute_uncertainty_level(margin: float) -> str:
         return "High confidence"
     elif margin >= THRESHOLD_MODERATE:
         return "Moderate confidence"
+    elif margin >= VERY_LOW_MARGIN:
+        return "Ambiguous — Manual Review Recommended"
     else:
-        return "Ambiguous"
+        return "Very low confidence / Needs Review"
 
 
 def get_top_features_for_doc(

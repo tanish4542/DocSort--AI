@@ -76,6 +76,22 @@ BASE_DIR = os.path.expanduser("~/Desktop/SortedDocuments")
 for category in CATEGORIES:
     os.makedirs(os.path.join(BASE_DIR, category), exist_ok=True)
 
+# Application-level fallback destination for out-of-domain / low-confidence documents
+MISCELLANEOUS_DIR_NAME = "Miscellaneous"
+MISCELLANEOUS_CATEGORY = "Miscellaneous / Needs Review"
+MISCELLANEOUS_DIR = os.path.join(BASE_DIR, MISCELLANEOUS_DIR_NAME)
+os.makedirs(MISCELLANEOUS_DIR, exist_ok=True)
+
+# ---------------------------------------------------
+# OPERATIONAL UNCERTAINTY & OUT-OF-DOMAIN THRESHOLDS
+# ---------------------------------------------------
+# NOTE: These thresholds are configurable operational constants for application routing.
+# They are not claimed to be statistically calibrated probabilities.
+# They can later be fine-tuned or optimized using a dedicated validation dataset.
+THRESHOLD_HIGH: float = 1.0          # High separation threshold
+LOW_MARGIN_THRESHOLD: float = 0.50    # Operational threshold for automatic routing
+VERY_LOW_MARGIN: float = 0.25         # Operational threshold below which files route to Miscellaneous
+
 # Ensure staging directory for ambiguous predictions exists
 PENDING_DIR = os.path.join(BASE_DIR, "_pending")
 os.makedirs(PENDING_DIR, exist_ok=True)
@@ -260,37 +276,34 @@ async def process_uploaded_file(file: UploadFile) -> dict:
         top_two = pred_res["top_two_domains"]
         text_length = pred_res["text_length"]
 
-        # Operational uncertainty heuristic:
-        # Ambiguous if decision margin < 0.5 -> require manual user confirmation
-        requires_manual = (uncertainty_level == "Ambiguous")
+        # Low-margin & Out-of-domain handling logic
+        # CASE 1: Very low margin (< VERY_LOW_MARGIN = 0.25)
+        # The document falls outside the confidently supported research domains
+        # or has insufficient classification evidence. Automatically route to Miscellaneous.
+        if decision_margin < VERY_LOW_MARGIN:
+            dest_path = os.path.join(MISCELLANEOUS_DIR, temp_filename)
+            shutil.move(temp_path, dest_path)
 
-        if requires_manual:
             pending_id = str(uuid.uuid4())
-            pending_path = os.path.join(
-                PENDING_DIR,
-                f"{pending_id}__{temp_filename}"
-            )
-            shutil.move(temp_path, pending_path)
-
-            allowed = tuple(d["domain"] for d in top_two) if len(top_two) >= 2 else (prediction, prediction)
-
+            allowed_domains = tuple(d["domain"] for d in top_two) + (MISCELLANEOUS_CATEGORY, "Miscellaneous")
             PENDING_FILES[pending_id] = {
-                "path": pending_path,
-                "allowed_domains": allowed,
+                "path": dest_path,
+                "allowed_domains": allowed_domains,
                 "final_basename": temp_filename,
                 "client_filename": client_name,
             }
 
             print(
-                f"[Ambiguous] Prediction: {prediction} | Margin: {decision_margin:.4f} "
-                f"| Staging for review (pending_id={pending_id})"
+                f"[Very Low Margin] Technical Prediction: {prediction} | Margin: {decision_margin:.4f} < {VERY_LOW_MARGIN} "
+                f"-> Auto-routed to {dest_path} as {MISCELLANEOUS_CATEGORY}"
             )
 
             return {
                 "filename": client_name,
-                "prediction": prediction,
-                "predicted_class": prediction,
-                "final_prediction": prediction,
+                "prediction": MISCELLANEOUS_CATEGORY,
+                "predicted_class": MISCELLANEOUS_CATEGORY,
+                "final_prediction": MISCELLANEOUS_CATEGORY,
+                "raw_prediction": prediction,
                 "selected_model": pred_res.get("selected_model", "LinearSVC"),
                 "selection_reason": pred_res.get(
                     "selection_reason",
@@ -300,7 +313,79 @@ async def process_uploaded_file(file: UploadFile) -> dict:
                 "model_performance": pred_res.get("model_performance", {}),
                 "ensemble_experiments": pred_res.get("ensemble_experiments", {}),
                 "decision_margin": decision_margin,
-                "uncertainty_level": uncertainty_level,
+                "uncertainty_level": "Very low confidence / Needs Review",
+                "status": "Miscellaneous / Needs Review",
+                "is_miscellaneous": True,
+                "explanation": (
+                    "This document falls outside the confidently supported research domains "
+                    "or has insufficient classification evidence. It has been separated rather than "
+                    "automatically assigned to a research category."
+                ),
+                "research_distinction": (
+                    "The six research categories form a closed experimental taxonomy. Real-world documents "
+                    "may fall outside these categories. The application therefore uses decision-margin-based "
+                    "review handling to avoid forcing uncertain documents into an unrelated class."
+                ),
+                "decision_scores": decision_scores,
+                "confidence": decision_margin,
+                "top_keywords": top_keywords,
+                "ranking": decision_scores,
+                "top_two_domains": top_two,
+                "requires_manual_choice": False,
+                "pending_id": pending_id,
+                "stored_in": dest_path,
+                "text_length": text_length,
+            }
+
+        # CASE 2: Ambiguous margin (0.25 <= margin < 0.50)
+        # e.g., MANVI_BIODATA.pdf (margin ~0.39)
+        # Do NOT automatically sort into the predicted research category.
+        # Stage for manual review.
+        elif decision_margin < LOW_MARGIN_THRESHOLD:
+            pending_id = str(uuid.uuid4())
+            pending_path = os.path.join(
+                PENDING_DIR,
+                f"{pending_id}__{temp_filename}"
+            )
+            shutil.move(temp_path, pending_path)
+
+            allowed = tuple(d["domain"] for d in top_two) + (MISCELLANEOUS_CATEGORY, "Miscellaneous")
+            PENDING_FILES[pending_id] = {
+                "path": pending_path,
+                "allowed_domains": allowed,
+                "final_basename": temp_filename,
+                "client_filename": client_name,
+            }
+
+            print(
+                f"[Ambiguous Margin] Prediction: {prediction} | Margin: {decision_margin:.4f} "
+                f"({VERY_LOW_MARGIN} <= margin < {LOW_MARGIN_THRESHOLD}) -> Staging for manual review (pending_id={pending_id})"
+            )
+
+            return {
+                "filename": client_name,
+                "prediction": prediction,
+                "predicted_class": prediction,
+                "final_prediction": prediction,
+                "raw_prediction": prediction,
+                "selected_model": pred_res.get("selected_model", "LinearSVC"),
+                "selection_reason": pred_res.get(
+                    "selection_reason",
+                    "LinearSVC achieved the highest test Macro F1 (94.49%) among the evaluated individual classifiers.",
+                ),
+                "model_comparison": pred_res.get("model_comparison", []),
+                "model_performance": pred_res.get("model_performance", {}),
+                "ensemble_experiments": pred_res.get("ensemble_experiments", {}),
+                "decision_margin": decision_margin,
+                "uncertainty_level": "Ambiguous — Manual Review Recommended",
+                "status": "Manual Review Required",
+                "is_miscellaneous": False,
+                "explanation": "Research classifier is uncertain. The document does not have sufficient evidence for automatic sorting.",
+                "research_distinction": (
+                    "The six research categories form a closed experimental taxonomy. Real-world documents "
+                    "may fall outside these categories. The application therefore uses decision-margin-based "
+                    "review handling to avoid forcing uncertain documents into an unrelated class."
+                ),
                 "decision_scores": decision_scores,
                 "confidence": decision_margin,
                 "top_keywords": top_keywords,
@@ -312,13 +397,13 @@ async def process_uploaded_file(file: UploadFile) -> dict:
                 "text_length": text_length,
             }
 
-        # Auto-sort path: Moderate or High confidence
+        # CASE 3: Normal confident classification (margin >= 0.50)
         dest_dir = os.path.join(BASE_DIR, prediction)
         os.makedirs(dest_dir, exist_ok=True)
         destination_path = os.path.join(dest_dir, temp_filename)
-
         shutil.move(temp_path, destination_path)
 
+        uncertainty_level = "High confidence" if decision_margin >= THRESHOLD_HIGH else "Moderate confidence"
         print(
             f"[Auto-Sort] Prediction: {prediction} | Margin: {decision_margin:.4f} "
             f"({uncertainty_level}) -> {destination_path}"
@@ -329,6 +414,7 @@ async def process_uploaded_file(file: UploadFile) -> dict:
             "prediction": prediction,
             "predicted_class": prediction,
             "final_prediction": prediction,
+            "raw_prediction": prediction,
             "selected_model": pred_res.get("selected_model", "LinearSVC"),
             "selection_reason": pred_res.get(
                 "selection_reason",
@@ -339,6 +425,9 @@ async def process_uploaded_file(file: UploadFile) -> dict:
             "ensemble_experiments": pred_res.get("ensemble_experiments", {}),
             "decision_margin": decision_margin,
             "uncertainty_level": uncertainty_level,
+            "status": "Organized Automatically",
+            "is_miscellaneous": False,
+            "explanation": "Document classified with sufficient decision margin into research taxonomy.",
             "decision_scores": decision_scores,
             "confidence": decision_margin,
             "top_keywords": top_keywords,
@@ -406,8 +495,9 @@ async def confirm_sort(body: ConfirmSortBody):
 
     chosen = body.chosen_domain.strip()
 
-    if chosen not in CATEGORIES:
-        return {"error": f"Invalid category '{chosen}'. Must be one of: {CATEGORIES}"}
+    valid_choices = list(CATEGORIES) + [MISCELLANEOUS_CATEGORY, "Miscellaneous"]
+    if chosen not in valid_choices:
+        return {"error": f"Invalid category '{chosen}'. Must be one of: {valid_choices}"}
 
     allowed = entry["allowed_domains"]
     if chosen not in allowed:
@@ -418,19 +508,25 @@ async def confirm_sort(body: ConfirmSortBody):
         PENDING_FILES.pop(body.pending_id, None)
         return {"error": "Pending file missing on disk. Please upload again."}
 
-    dest_dir = os.path.join(BASE_DIR, chosen)
+    if chosen in (MISCELLANEOUS_CATEGORY, "Miscellaneous"):
+        dest_dir = MISCELLANEOUS_DIR
+        final_category = MISCELLANEOUS_CATEGORY
+    else:
+        dest_dir = os.path.join(BASE_DIR, chosen)
+        final_category = chosen
+
     os.makedirs(dest_dir, exist_ok=True)
     dest_path = os.path.join(dest_dir, entry["final_basename"])
 
     shutil.move(src, dest_path)
     PENDING_FILES.pop(body.pending_id, None)
 
-    print(f"[User Confirmed] Choice: {chosen} -> {dest_path}")
+    print(f"[User Confirmed] Choice: {final_category} -> {dest_path}")
 
     return {
         "filename": entry["client_filename"],
-        "prediction": chosen,
-        "predicted_class": chosen,
+        "prediction": final_category,
+        "predicted_class": final_category,
         "stored_in": dest_path,
         "confidence": 100.0,
         "decision_margin": 10.0,
