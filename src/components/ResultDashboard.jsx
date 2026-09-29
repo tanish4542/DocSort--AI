@@ -169,7 +169,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
                 <strong>Low-confidence document — automatically placed in Anonymous.</strong>
               </p>
               <p style={{ marginTop: "6px", fontSize: "0.86rem", color: "#64748b" }}>
-                Decision margin ({decisionMargin != null ? decisionMargin.toFixed(2) : "—"}) fell below the 0.25 threshold. Placed into <code>~/Desktop/SortedDocuments/Anonymous/</code>.
+                Decision margin ({decisionMargin != null ? decisionMargin.toFixed(2) : "—"}) fell below the 0.25 threshold. Automatically routed to the <code>Anonymous</code> category folder.
               </p>
             </div>
 

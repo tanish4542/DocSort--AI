@@ -376,6 +376,11 @@ function enrichStoredPrediction(raw) {
     prediction: pred,
     predicted_class: pred,
     finalPrediction: raw.finalPrediction || pred,
+    savedLocally: Boolean(raw.savedLocally),
+    localPath: raw.localPath || null,
+    localCategory: raw.localCategory || null,
+    localFilename: raw.localFilename || null,
+    fileBlob: raw.fileBlob || null,
     selectedModel: raw.selectedModel || "LinearSVC",
     selectionReason:
       raw.selectionReason ||
@@ -498,6 +503,13 @@ async function getUniqueFileNameInDirectory(categoryDirHandle, cleanFilename) {
 
 async function saveFileToLocalDirectory(dirHandle, fileBlob, categoryName, originalFilename) {
   if (!dirHandle || !fileBlob) return null;
+
+  if (typeof dirHandle.queryPermission === "function") {
+    const permStatus = await dirHandle.queryPermission({ mode: "readwrite" });
+    if (permStatus !== "granted") {
+      throw new Error("Folder write permission is not granted.");
+    }
+  }
 
   const categoryDir = await dirHandle.getDirectoryHandle(categoryName, { create: true });
   const cleanName = originalFilename || fileBlob.name || "document";
@@ -792,6 +804,18 @@ function AppProvider({ children }) {
         mode: "readwrite",
       });
       if (handle) {
+        let permission = "granted";
+        if (typeof handle.requestPermission === "function") {
+          permission = await handle.requestPermission({ mode: "readwrite" });
+        }
+        if (permission !== "granted") {
+          setLocalDirHandle(null);
+          setLocalDirName("");
+          setError(
+            "Folder write permission was denied. Documents cannot be saved locally without permission."
+          );
+          return null;
+        }
         setLocalDirHandle(handle);
         setLocalDirName(handle.name || "SortedDocuments");
         setError("");
