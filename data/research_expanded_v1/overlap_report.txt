@@ -1,0 +1,8 @@
+{
+  "initial_candidate_pool": 67250,
+  "null_removed": 324,
+  "short_removed": 775,
+  "v1_test_overlap_removed": 4030,
+  "internal_duplicates_removed": 5348,
+  "clean_unique_candidates": 56773
+}

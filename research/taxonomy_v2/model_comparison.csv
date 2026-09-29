@@ -1,0 +1,4 @@
+model_name,accuracy,macro_precision,macro_recall,macro_f1,weighted_f1
+Multinomial Naive Bayes,91.45,91.65,91.17,91.32,91.48
+Logistic Regression,93.96,94.09,93.74,93.9,93.98
+LinearSVC,94.24,94.15,94.09,94.12,94.25

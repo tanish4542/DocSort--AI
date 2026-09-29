@@ -1,0 +1,19 @@
+filename,filepath,file_type,text_length,provisional_label,reason,needs_manual_review
+Air India Web Booking eTicket (9WSBWJ) - TANISH.pdf,data/real_world_eval/Air India Web Booking eTicket (9WSBWJ) - TANISH.pdf,PDF,4910,OOD,Airline e-ticket booking confirmation,False
+ID card 25 Mar 2025.pdf,data/real_world_eval/ID card 25 Mar 2025.pdf,PDF,122,OOD,Student identity card,False
+LAB MANUAL.pdf,data/real_world_eval/LAB MANUAL.pdf,PDF,23752,Science & Academics,Academic course lab manual containing Deep Learning & Computer Science neural network lab exercises (mapped to Science & Academics per teacher taxonomy rule),False
+MANVI_BIODATA.pdf,data/real_world_eval/MANVI_BIODATA.pdf,PDF,1183,OOD,Personal marriage biodata profile document,False
+Major Project Synopsis.pdf,data/real_world_eval/Major Project Synopsis.pdf,PDF,6370,Technology & Computing,Academic project proposal formatting combined with Computer Science & AI software architecture content (primary subject is computer science software engineering project),False
+Receipt_13Jul2025_130649.pdf,data/real_world_eval/Receipt_13Jul2025_130649.pdf,PDF,834,OOD,Retail payment transaction receipt,False
+Speaker1_What_to_Speak_Only.docx,data/real_world_eval/Speaker1_What_to_Speak_Only.docx,DOCX,8658,Medical Health,Speech script on AI in Disease Diagnosis (primary domain is medical healthcare & clinical diagnosis per teacher taxonomy rule),False
+Syllabus.pdf,data/real_world_eval/Syllabus.pdf,PDF,5326,Science & Academics,"Academic course syllabus covering Microcontrollers, assembly programming, and hardware architecture (mapped to Science & Academics per teacher taxonomy rule)",False
+TANISH_ARORA_CV_OLD.pdf,data/real_world_eval/TANISH_ARORA_CV_OLD.pdf,PDF,3181,OOD,Professional resume / CV document,False
+back-of-the-napkin.pdf,data/real_world_eval/back-of-the-napkin.pdf,PDF,326473,Business and Finance,Business problem-solving and corporate executive strategy publication,False
+MANVI_BIODATA.pdf,test_assets/MANVI_BIODATA.pdf,PDF,1183,OOD,Personal marriage biodata profile document,False
+01_Technology_Computing.pdf,test_assets/controlled_pdfs/01_Technology_Computing.pdf,PDF,558,Technology & Computing,Controlled research benchmark sample for Technology & Computing,False
+02_Medical_Health.pdf,test_assets/controlled_pdfs/02_Medical_Health.pdf,PDF,486,Medical Health,Controlled research benchmark sample for Medical Health,False
+03_Business_Finance.pdf,test_assets/controlled_pdfs/03_Business_Finance.pdf,PDF,484,Business and Finance,Controlled research benchmark sample for Business and Finance,False
+04_Entertainment.pdf,test_assets/controlled_pdfs/04_Entertainment.pdf,PDF,486,Entertainment,Controlled research benchmark sample for Entertainment,False
+05_Sports.pdf,test_assets/controlled_pdfs/05_Sports.pdf,PDF,471,Sports,Controlled research benchmark sample for Sports,False
+06_Science.pdf,test_assets/controlled_pdfs/06_Science.pdf,PDF,489,Science,Controlled research benchmark sample for Science,False
+ood_miscellaneous_doc.pdf,test_assets/ood_miscellaneous_doc.pdf,PDF,178,OOD,Administrative building access protocol,False

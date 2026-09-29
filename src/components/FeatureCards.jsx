@@ -11,7 +11,7 @@ const features = [
   },
   {
     title: "Multi-Domain Support",
-    text: "Handles Business and Finance, Medical Health, Sports, Technology & Computing, Science, and Entertainment.",
+    text: "Handles Business & Finance, Medical Health, Sports, Technology & Computing, Science & Academics, and Entertainment.",
   },
   {
     title: "PDF / DOCX / TXT Support",

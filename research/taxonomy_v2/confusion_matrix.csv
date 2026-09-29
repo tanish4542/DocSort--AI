@@ -1,0 +1,109 @@
+model_name,true_class,predicted_class,count
+Multinomial Naive Bayes,Business & Finance,Business & Finance,875
+Multinomial Naive Bayes,Business & Finance,Entertainment,15
+Multinomial Naive Bayes,Business & Finance,Medical Health,4
+Multinomial Naive Bayes,Business & Finance,Science & Academics,13
+Multinomial Naive Bayes,Business & Finance,Sports,1
+Multinomial Naive Bayes,Business & Finance,Technology & Computing,47
+Multinomial Naive Bayes,Entertainment,Business & Finance,1
+Multinomial Naive Bayes,Entertainment,Entertainment,917
+Multinomial Naive Bayes,Entertainment,Medical Health,5
+Multinomial Naive Bayes,Entertainment,Science & Academics,5
+Multinomial Naive Bayes,Entertainment,Sports,9
+Multinomial Naive Bayes,Entertainment,Technology & Computing,18
+Multinomial Naive Bayes,Medical Health,Business & Finance,10
+Multinomial Naive Bayes,Medical Health,Entertainment,36
+Multinomial Naive Bayes,Medical Health,Medical Health,835
+Multinomial Naive Bayes,Medical Health,Science & Academics,27
+Multinomial Naive Bayes,Medical Health,Sports,6
+Multinomial Naive Bayes,Medical Health,Technology & Computing,42
+Multinomial Naive Bayes,Science & Academics,Business & Finance,7
+Multinomial Naive Bayes,Science & Academics,Entertainment,19
+Multinomial Naive Bayes,Science & Academics,Medical Health,20
+Multinomial Naive Bayes,Science & Academics,Science & Academics,593
+Multinomial Naive Bayes,Science & Academics,Sports,1
+Multinomial Naive Bayes,Science & Academics,Technology & Computing,46
+Multinomial Naive Bayes,Sports,Business & Finance,7
+Multinomial Naive Bayes,Sports,Entertainment,27
+Multinomial Naive Bayes,Sports,Medical Health,1
+Multinomial Naive Bayes,Sports,Science & Academics,10
+Multinomial Naive Bayes,Sports,Sports,889
+Multinomial Naive Bayes,Sports,Technology & Computing,22
+Multinomial Naive Bayes,Technology & Computing,Business & Finance,23
+Multinomial Naive Bayes,Technology & Computing,Entertainment,15
+Multinomial Naive Bayes,Technology & Computing,Medical Health,8
+Multinomial Naive Bayes,Technology & Computing,Science & Academics,43
+Multinomial Naive Bayes,Technology & Computing,Sports,2
+Multinomial Naive Bayes,Technology & Computing,Technology & Computing,1134
+Logistic Regression,Business & Finance,Business & Finance,902
+Logistic Regression,Business & Finance,Entertainment,12
+Logistic Regression,Business & Finance,Medical Health,5
+Logistic Regression,Business & Finance,Science & Academics,9
+Logistic Regression,Business & Finance,Sports,1
+Logistic Regression,Business & Finance,Technology & Computing,26
+Logistic Regression,Entertainment,Business & Finance,4
+Logistic Regression,Entertainment,Entertainment,909
+Logistic Regression,Entertainment,Medical Health,15
+Logistic Regression,Entertainment,Science & Academics,7
+Logistic Regression,Entertainment,Sports,6
+Logistic Regression,Entertainment,Technology & Computing,14
+Logistic Regression,Medical Health,Business & Finance,3
+Logistic Regression,Medical Health,Entertainment,11
+Logistic Regression,Medical Health,Medical Health,887
+Logistic Regression,Medical Health,Science & Academics,14
+Logistic Regression,Medical Health,Sports,5
+Logistic Regression,Medical Health,Technology & Computing,36
+Logistic Regression,Science & Academics,Business & Finance,5
+Logistic Regression,Science & Academics,Entertainment,6
+Logistic Regression,Science & Academics,Medical Health,18
+Logistic Regression,Science & Academics,Science & Academics,618
+Logistic Regression,Science & Academics,Sports,2
+Logistic Regression,Science & Academics,Technology & Computing,37
+Logistic Regression,Sports,Business & Finance,7
+Logistic Regression,Sports,Entertainment,8
+Logistic Regression,Sports,Medical Health,2
+Logistic Regression,Sports,Science & Academics,7
+Logistic Regression,Sports,Sports,910
+Logistic Regression,Sports,Technology & Computing,22
+Logistic Regression,Technology & Computing,Business & Finance,19
+Logistic Regression,Technology & Computing,Entertainment,9
+Logistic Regression,Technology & Computing,Medical Health,5
+Logistic Regression,Technology & Computing,Science & Academics,28
+Logistic Regression,Technology & Computing,Sports,3
+Logistic Regression,Technology & Computing,Technology & Computing,1161
+LinearSVC,Business & Finance,Business & Finance,899
+LinearSVC,Business & Finance,Entertainment,12
+LinearSVC,Business & Finance,Medical Health,9
+LinearSVC,Business & Finance,Science & Academics,13
+LinearSVC,Business & Finance,Sports,2
+LinearSVC,Business & Finance,Technology & Computing,20
+LinearSVC,Entertainment,Business & Finance,1
+LinearSVC,Entertainment,Entertainment,910
+LinearSVC,Entertainment,Medical Health,14
+LinearSVC,Entertainment,Science & Academics,8
+LinearSVC,Entertainment,Sports,9
+LinearSVC,Entertainment,Technology & Computing,13
+LinearSVC,Medical Health,Business & Finance,5
+LinearSVC,Medical Health,Entertainment,10
+LinearSVC,Medical Health,Medical Health,899
+LinearSVC,Medical Health,Science & Academics,12
+LinearSVC,Medical Health,Sports,7
+LinearSVC,Medical Health,Technology & Computing,23
+LinearSVC,Science & Academics,Business & Finance,11
+LinearSVC,Science & Academics,Entertainment,6
+LinearSVC,Science & Academics,Medical Health,18
+LinearSVC,Science & Academics,Science & Academics,624
+LinearSVC,Science & Academics,Sports,4
+LinearSVC,Science & Academics,Technology & Computing,23
+LinearSVC,Sports,Business & Finance,7
+LinearSVC,Sports,Entertainment,9
+LinearSVC,Sports,Medical Health,2
+LinearSVC,Sports,Science & Academics,6
+LinearSVC,Sports,Sports,917
+LinearSVC,Sports,Technology & Computing,15
+LinearSVC,Technology & Computing,Business & Finance,16
+LinearSVC,Technology & Computing,Entertainment,12
+LinearSVC,Technology & Computing,Medical Health,8
+LinearSVC,Technology & Computing,Science & Academics,30
+LinearSVC,Technology & Computing,Sports,5
+LinearSVC,Technology & Computing,Technology & Computing,1154

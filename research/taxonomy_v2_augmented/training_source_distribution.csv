@@ -1,0 +1,20 @@
+category,source_dataset,count
+Business & Finance,Reuters-21578,3162
+Business & Finance,IAB News (Expanded),2972
+Business & Finance,Structured Invoices & Receipts Archive,800
+Business & Finance,BBC News,236
+Entertainment,IAB News (Expanded),6001
+Entertainment,BBC News,369
+Medical Health,IAB News (Expanded),3684
+Medical Health,MTSamples,1935
+Medical Health,20 Newsgroups,751
+Science & Academics,IAB News (Expanded),3662
+Science & Academics,PubMed QA Academic Abstracts,1000
+Science & Academics,20 Newsgroups,908
+Science & Academics,University Courseware & Syllabi Archive,800
+Sports,IAB News (Expanded),5210
+Sports,20 Newsgroups,922
+Sports,BBC News,238
+Technology & Computing,20 Newsgroups,5013
+Technology & Computing,IAB News (Expanded),2910
+Technology & Computing,BBC News,247

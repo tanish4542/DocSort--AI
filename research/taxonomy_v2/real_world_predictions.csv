@@ -1,0 +1,19 @@
+filename,ground_truth,known_or_ood,mnb_prediction,logreg_prediction,lsvc_prediction,decision_margin,lsvc_correct
+Air India Web Booking eTicket (9WSBWJ) - TANISH.pdf,OOD,OOD,Technology & Computing,Technology & Computing,Technology & Computing,1.0296,False
+ID card 25 Mar 2025.pdf,OOD,OOD,Technology & Computing,Technology & Computing,Technology & Computing,0.658,False
+LAB MANUAL.pdf,Science & Academics,Known,Technology & Computing,Technology & Computing,Technology & Computing,2.3452,False
+MANVI_BIODATA.pdf,OOD,OOD,Medical Health,Medical Health,Medical Health,0.6038,False
+Major Project Synopsis.pdf,Technology & Computing,Known,Technology & Computing,Technology & Computing,Technology & Computing,2.9271,True
+Receipt_13Jul2025_130649.pdf,OOD,OOD,Business & Finance,Technology & Computing,Business & Finance,0.2056,False
+Speaker1_What_to_Speak_Only.docx,Medical Health,Known,Medical Health,Medical Health,Medical Health,1.4513,True
+Syllabus.pdf,Science & Academics,Known,Technology & Computing,Technology & Computing,Technology & Computing,3.6463,False
+TANISH_ARORA_CV_OLD.pdf,OOD,OOD,Technology & Computing,Technology & Computing,Technology & Computing,3.2583,False
+back-of-the-napkin.pdf,Business and Finance,Known,Technology & Computing,Science & Academics,Science & Academics,0.4363,False
+MANVI_BIODATA.pdf,OOD,OOD,Medical Health,Medical Health,Medical Health,0.6038,False
+01_Technology_Computing.pdf,Technology & Computing,Known,Technology & Computing,Technology & Computing,Technology & Computing,1.8528,True
+02_Medical_Health.pdf,Medical Health,Known,Medical Health,Medical Health,Medical Health,3.4285,True
+03_Business_Finance.pdf,Business and Finance,Known,Business & Finance,Business & Finance,Business & Finance,3.6235,False
+04_Entertainment.pdf,Entertainment,Known,Entertainment,Entertainment,Entertainment,5.2417,True
+05_Sports.pdf,Sports,Known,Sports,Sports,Sports,5.3874,True
+06_Science.pdf,Science,Known,Science & Academics,Science & Academics,Science & Academics,3.1773,False
+ood_miscellaneous_doc.pdf,OOD,OOD,Technology & Computing,Technology & Computing,Technology & Computing,0.2118,False

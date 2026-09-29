@@ -1,0 +1,37 @@
+true_class,predicted_class,count
+Business & Finance,Business & Finance,1021
+Business & Finance,Entertainment,6
+Business & Finance,Medical Health,5
+Business & Finance,Science & Academics,9
+Business & Finance,Sports,3
+Business & Finance,Technology & Computing,31
+Entertainment,Business & Finance,6
+Entertainment,Entertainment,917
+Entertainment,Medical Health,15
+Entertainment,Science & Academics,5
+Entertainment,Sports,5
+Entertainment,Technology & Computing,7
+Medical Health,Business & Finance,6
+Medical Health,Entertainment,13
+Medical Health,Medical Health,881
+Medical Health,Science & Academics,25
+Medical Health,Sports,2
+Medical Health,Technology & Computing,29
+Science & Academics,Business & Finance,8
+Science & Academics,Entertainment,7
+Science & Academics,Medical Health,33
+Science & Academics,Science & Academics,873
+Science & Academics,Sports,5
+Science & Academics,Technology & Computing,30
+Sports,Business & Finance,2
+Sports,Entertainment,7
+Sports,Medical Health,1
+Sports,Science & Academics,6
+Sports,Sports,925
+Sports,Technology & Computing,15
+Technology & Computing,Business & Finance,18
+Technology & Computing,Entertainment,6
+Technology & Computing,Medical Health,9
+Technology & Computing,Science & Academics,28
+Technology & Computing,Sports,5
+Technology & Computing,Technology & Computing,1159

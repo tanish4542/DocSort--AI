@@ -1,0 +1,28 @@
+# Python & Testing
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+*.log
+
+# Node & Build artifacts
+node_modules/
+.eslintcache
+
+# Generated Large Research Datasets (Local machine only)
+data/research_expanded_v1/combined_dataset.csv
+data/research_expanded_v1/splits/
+data/taxonomy_v2/dataset.csv
+data/taxonomy_v2/splits/
+data/taxonomy_v2_augmented/dataset.csv
+data/taxonomy_v2_augmented/splits/
+data/taxonomy_v2_academic_targeted/dataset.csv
+data/taxonomy_v2_academic_targeted/splits/
+data/taxonomy_v2_structural/dataset.csv
+data/taxonomy_v2_structural/splits/
+data/research/docsort_research_dataset.csv
+data/research/splits/
+
+# OS metadata
+.DS_Store
+Thumbs.db

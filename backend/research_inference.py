@@ -1,161 +1,168 @@
 """
 backend/research_inference.py
 
-Dedicated inference module for the final DocSort AI research model:
-- LinearSVC(C=0.5)
-- TF-IDF Vectorizer (100,000 unigram/bigram features)
-- 6 Balanced Classes:
-    1. Business and Finance
-    2. Entertainment
-    3. Medical Health
-    4. Science
-    5. Sports
-    6. Technology & Computing
+Production inference module for DocSort AI using the Structural Feature + TF-IDF LinearSVC model.
 
-Rules:
-- Models are loaded strictly once at startup using joblib.
-- Production inference uses vectorizer.transform() ONLY (no fitting).
-- Decision margins and uncertainty levels are calculated from LinearSVC decision scores.
-- Feature attribution is derived mathematically from document TF-IDF values and model coefficients:
-    contribution_j = x_j * weight[c, j]
+Artifacts Loaded:
+- research/taxonomy_v2_structural/models/tfidf_vectorizer.joblib
+- research/taxonomy_v2_structural/models/scaler.joblib
+- research/taxonomy_v2_structural/models/linearsvc_combined.joblib
+
+6 Final Taxonomy Classes:
+    1. Technology & Computing
+    2. Science & Academics
+    3. Medical Health
+    4. Business & Finance
+    5. Entertainment
+    6. Sports
+
+Decision Rule:
+    decision_margin = top_score - second_highest_score
+    if decision_margin < 0.25:
+        final_destination = "Anonymous"
+        is_anonymous = True
+    else:
+        final_destination = predicted_class
+        is_anonymous = False
 """
 
 from __future__ import annotations
 
 import logging
 import os
+import re
+import hashlib
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import joblib
 import numpy as np
+from scipy.sparse import hstack, csr_matrix
 
 logger = logging.getLogger("docsort.research_inference")
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
-# Resolve paths to research models
+# Resolve paths to structural research model artifacts
 BACKEND_DIR = Path(__file__).resolve().parent
 PROJECT_ROOT = BACKEND_DIR.parent
-RESEARCH_MODELS_DIR = PROJECT_ROOT / "research" / "models"
+STRUCTURAL_MODELS_DIR = PROJECT_ROOT / "research" / "taxonomy_v2_structural" / "models"
 
-VEC_PATH = RESEARCH_MODELS_DIR / "tfidf_vectorizer.joblib"
-SVC_PATH = RESEARCH_MODELS_DIR / "linear_svc.joblib"
-NB_PATH = RESEARCH_MODELS_DIR / "multinomial_nb.joblib"
-LR_PATH = RESEARCH_MODELS_DIR / "logistic_regression.joblib"
+VEC_PATH = STRUCTURAL_MODELS_DIR / "tfidf_vectorizer.joblib"
+SCALER_PATH = STRUCTURAL_MODELS_DIR / "scaler.joblib"
+SVC_PATH = STRUCTURAL_MODELS_DIR / "linearsvc_combined.joblib"
 
-# Operational uncertainty thresholds for LinearSVC (Not calibrated probabilities)
-# margin >= 1.0  -> High confidence
-# 0.5 <= margin < 1.0 -> Moderate confidence
-# 0.25 <= margin < 0.5 -> Ambiguous — Manual Review Recommended
-# margin < 0.25 -> Very low confidence / Needs Review (auto-routes to Miscellaneous)
-THRESHOLD_HIGH = 1.0
-THRESHOLD_MODERATE = 0.50
-VERY_LOW_MARGIN = 0.25
+# Provisional decision margin threshold
+PROVISIONAL_MARGIN_THRESHOLD = 0.25
+STRUCT_WEIGHT = 2.0
 
-# Validation: ensure files exist
+# Keywords for Structural Feature Extraction
+ACADEMIC_KEYWORDS = [
+    "syllabus", "lab manual", "course syllabus", "course objectives",
+    "learning objectives", "learning outcomes", "course outcomes",
+    "prerequisites", "credits", "semester", "module", "unit",
+    "experiment", "experiments", "assessment", "grading", "marks",
+    "faculty", "department", "university", "college", "laboratory",
+    "lab", "references", "textbook"
+]
+
+TECH_KEYWORDS = [
+    "software", "program", "programming", "code", "compiler",
+    "api", "framework", "library", "repository", "github",
+    "deployment", "installation", "version", "implementation",
+    "database", "algorithm", "hardware"
+]
+
+STRUCTURAL_MODEL_DIR = str(STRUCTURAL_MODELS_DIR)
+
+def load_production_model():
+    return {
+        "vectorizer": vectorizer,
+        "scaler": scaler,
+        "clf": linear_svc,
+        "model_dir": STRUCTURAL_MODEL_DIR,
+    }
+
+# Validation: ensure model files exist
 for artifact_path, name in [
-    (VEC_PATH, "TF-IDF vectorizer"),
-    (SVC_PATH, "LinearSVC model"),
-    (NB_PATH, "MultinomialNB model"),
-    (LR_PATH, "LogisticRegression model"),
+    (VEC_PATH, "TF-IDF Vectorizer"),
+    (SCALER_PATH, "Structural Scaler"),
+    (SVC_PATH, "Combined LinearSVC Classifier"),
 ]:
     if not artifact_path.is_file():
         raise RuntimeError(
-            f"Critical startup error: {name} artifact not found at {artifact_path}. "
-            f"Do not fall back to legacy models."
+            f"Critical startup error: {name} artifact not found at {artifact_path}."
         )
 
-# Fixed test-set performance metrics from research experiment
-MODEL_PERFORMANCE: Dict[str, Dict[str, Any]] = {
-    "Multinomial Naive Bayes": {
-        "accuracy": 0.9116,
-        "macro_f1": 0.9117,
-        "model_type": "Probabilistic Classifier",
-    },
-    "Logistic Regression": {
-        "accuracy": 0.9406,
-        "macro_f1": 0.9405,
-        "model_type": "Linear Classifier",
-    },
-    "LinearSVC": {
-        "accuracy": 0.9450,
-        "macro_f1": 0.9449,
-        "model_type": "Support Vector Classifier (Selected)",
-    },
-}
-
-ENSEMBLE_EXPERIMENTS: Dict[str, Dict[str, Any]] = {
-    "Soft Voting": {
-        "macro_f1": 0.9415,
-        "accuracy": 0.9416,
-        "notes": "Probability-averaged voting ensemble combining base classifiers.",
-    },
-    "Stacking": {
-        "macro_f1": 0.9447,
-        "accuracy": 0.9447,
-        "notes": "Meta-classifier trained on base model prediction representations.",
-    },
-    "LinearSVC": {
-        "macro_f1": 0.9449,
-        "accuracy": 0.9450,
-        "notes": "Selected final model (highest Macro F1 among all evaluated models).",
-    },
-}
-
-# Load model artifacts once at startup
+# Load production structural model artifacts
 try:
     vectorizer = joblib.load(VEC_PATH)
+    scaler = joblib.load(SCALER_PATH)
     linear_svc = joblib.load(SVC_PATH)
-    multinomial_nb = joblib.load(NB_PATH)
-    logistic_regression = joblib.load(LR_PATH)
 
     CLASSES = list(linear_svc.classes_)
     FEATURE_NAMES = np.array(vectorizer.get_feature_names_out())
     VOCAB_SIZE = len(vectorizer.vocabulary_)
 
-    print("=" * 70)
-    print("DOCSORT AI — 3-MODEL RESEARCH INFERENCE MODULE INITIALIZED")
-    print("=" * 70)
-    print(f"Research models loaded successfully from: {RESEARCH_MODELS_DIR}")
-    print(f"Models: MultinomialNB, LogisticRegression, LinearSVC (Selected)")
-    print(f"Classes ({len(CLASSES)}): {CLASSES}")
-    print(f"TF-IDF vocabulary size: {VOCAB_SIZE:,} features")
-    print("=" * 70)
-    logger.info("All 3 research classifiers and TF-IDF vectorizer ready for inference.")
-
+    logger.info(f"Loaded structural model artifacts from {STRUCTURAL_MODELS_DIR}")
+    logger.info(f"Classes ({len(CLASSES)}): {CLASSES}")
+    logger.info(f"TF-IDF vocabulary size: {VOCAB_SIZE:,} features")
 except Exception as e:
-    raise RuntimeError(
-        f"Failed to load research model artifacts: {e}. Aborting startup."
-    ) from e
+    raise RuntimeError(f"Failed to load structural model artifacts: {e}") from e
 
 
-def compute_uncertainty_level(margin: float) -> str:
-    """
-    Assign an operational uncertainty label based on the decision margin between
-    the highest and second-highest decision scores.
-    NOTE: These are operational heuristics for application routing, NOT calibrated probabilities.
-    """
-    if margin >= THRESHOLD_HIGH:
-        return "High confidence"
-    elif margin >= THRESHOLD_MODERATE:
-        return "Moderate confidence"
-    elif margin >= VERY_LOW_MARGIN:
-        return "Ambiguous — Manual Review Recommended"
-    else:
-        return "Very low confidence / Needs Review"
+def extract_structural_features(texts: List[str]) -> np.ndarray:
+    """Extracts explicit structural feature vector for each text."""
+    features = []
+    code_line_pattern = re.compile(
+        r"^\s*(def |class |import |from |#include|int |void |return |if \(|for \(|var |let |const |;\s*$|\{\s*$|\}\s*$)",
+        re.MULTILINE
+    )
+
+    for txt in texts:
+        t_str = str(txt)
+        t_lower = t_str.lower()
+        words = t_lower.split()
+        num_words = max(len(words), 1)
+
+        acad_cnt = sum(t_lower.count(kw) for kw in ACADEMIC_KEYWORDS)
+        tech_cnt = sum(t_lower.count(kw) for kw in TECH_KEYWORDS)
+
+        doc_len_log = np.log1p(len(t_str))
+        acad_density = acad_cnt / num_words
+        tech_density = tech_cnt / num_words
+        struct_ratio = (acad_cnt - tech_cnt) / (acad_cnt + tech_cnt + 1.0)
+
+        lines = [line.strip() for line in t_str.splitlines() if line.strip()]
+        num_lines = max(len(lines), 1)
+        code_lines_cnt = sum(1 for line in lines if code_line_pattern.match(line))
+        code_line_density = code_lines_cnt / num_lines
+
+        has_syllabus_hdr = 1.0 if any(k in t_lower for k in ["syllabus", "course outline", "course overview", "credit hours", "prerequisites:"]) else 0.0
+        has_lab_manual_hdr = 1.0 if any(k in t_lower for k in ["lab manual", "laboratory manual", "lab experiment", "experimental procedure", "viva voce"]) else 0.0
+
+        feat_vector = [
+            float(acad_cnt),
+            float(tech_cnt),
+            float(doc_len_log),
+            float(acad_density),
+            float(tech_density),
+            float(struct_ratio),
+            float(code_line_density),
+            float(has_syllabus_hdr),
+            float(has_lab_manual_hdr),
+        ]
+        features.append(feat_vector)
+
+    return np.array(features, dtype=np.float32)
 
 
 def get_top_features_for_doc(
-    X_sparse,
+    X_tfidf_sparse,
     top_class_idx: int,
     top_k: int = 12
 ) -> List[Tuple[str, float]]:
-    """
-    Calculates the exact lexical feature contributions for the predicted class:
-        contribution_j = x_j * weight[predicted_class, j]
-    Only considers non-zero TF-IDF features present in this document.
-    """
-    cx = X_sparse.tocoo()
+    """Calculates TF-IDF lexical feature contributions for the predicted class."""
+    cx = X_tfidf_sparse.tocoo()
     if cx.nnz == 0:
         return []
 
@@ -170,7 +177,6 @@ def get_top_features_for_doc(
     for idx in ranked_order:
         contrib = float(contributions[idx])
         if contrib <= 0 and len(top_features) >= 3:
-            # Prefer positive drivers once we have at least 3 features
             break
         word = str(FEATURE_NAMES[col_indices[idx]])
         top_features.append((word, round(contrib, 4)))
@@ -182,54 +188,42 @@ def get_top_features_for_doc(
 
 def predict_text(text: str) -> Dict[str, Any]:
     """
-    Performs research inference on a raw extracted document string across ALL 3
-    individual classifiers (MultinomialNB, LogisticRegression, LinearSVC).
-
-    LinearSVC remains the actual final prediction and auto-sorting decision.
+    Performs production inference on a raw extracted document string using the
+    Combined TF-IDF + Structural Features + LinearSVC model.
     """
     cleaned_str = str(text).strip() if text else ""
     text_length = len(cleaned_str)
 
     if not cleaned_str:
-        # Fallback for empty/unextractable text
         return {
-            "final_prediction": "Unknown",
-            "selected_model": "LinearSVC",
-            "selection_reason": "LinearSVC achieved the highest test Macro F1 (94.49%) among the evaluated individual classifiers.",
-            "model_comparison": [],
-            "model_performance": MODEL_PERFORMANCE,
-            "ensemble_experiments": ENSEMBLE_EXPERIMENTS,
-            "predicted_class": "Unknown",
-            "runner_up_class": "Unknown",
+            "predicted_class": "Anonymous",
+            "runner_up_class": "Anonymous",
             "decision_margin": 0.0,
-            "uncertainty_level": "Ambiguous",
+            "is_anonymous": True,
+            "final_destination": "Anonymous",
+            "model": "TF-IDF + Structural Features + LinearSVC",
             "top_score": 0.0,
             "runner_up_score": 0.0,
             "decision_scores": {c: 0.0 for c in CLASSES},
             "top_keywords": [],
             "top_features": [],
-            "top_two_domains": [],
             "text_length": 0,
         }
 
-    # 1. Transform raw text through pre-fitted research TF-IDF vectorizer (100k features)
-    X = vectorizer.transform([cleaned_str])
+    # 1. Transform TF-IDF
+    X_tfidf = vectorizer.transform([cleaned_str])
 
-    # 2. Classifier 1: Multinomial Naive Bayes (Probabilistic)
-    nb_probas = multinomial_nb.predict_proba(X)[0]
-    nb_top_idx = int(np.argmax(nb_probas))
-    nb_pred = str(multinomial_nb.classes_[nb_top_idx])
-    nb_score = round(float(nb_probas[nb_top_idx]), 4)
+    # 2. Extract & Scale Structural Features
+    struct_raw = extract_structural_features([cleaned_str])
+    struct_scaled = scaler.transform(struct_raw)
 
-    # 3. Classifier 2: Logistic Regression (Linear Probabilistic)
-    lr_probas = logistic_regression.predict_proba(X)[0]
-    lr_top_idx = int(np.argmax(lr_probas))
-    lr_pred = str(logistic_regression.classes_[lr_top_idx])
-    lr_score = round(float(lr_probas[lr_top_idx]), 4)
+    # 3. Concatenate TF-IDF + Scaled Structural Features (with 2.0 weighting matching training)
+    X_comb = hstack([X_tfidf, csr_matrix(struct_scaled * STRUCT_WEIGHT)]).tocsr()
 
-    # 4. Classifier 3: LinearSVC (Maximum-Margin Hyperplane — SELECTED FINAL MODEL)
-    svc_scores = linear_svc.decision_function(X)[0]
+    # 4. Predict LinearSVC Decision Function
+    svc_scores = linear_svc.decision_function(X_comb)[0]
     order = np.argsort(svc_scores)[::-1]
+
     top_idx = int(order[0])
     runner_up_idx = int(order[1])
 
@@ -240,96 +234,52 @@ def predict_text(text: str) -> Dict[str, Any]:
     runner_up_score = float(svc_scores[runner_up_idx])
 
     decision_margin = round(top_score - runner_up_score, 4)
-    uncertainty_level = compute_uncertainty_level(decision_margin)
 
-    # All LinearSVC class decision scores (sorted descending)
+    # Anonymous decision threshold rule
+    if decision_margin < PROVISIONAL_MARGIN_THRESHOLD:
+        final_destination = "Anonymous"
+        is_anonymous = True
+    else:
+        final_destination = top_class
+        is_anonymous = False
+
     decision_scores = {
         str(CLASSES[i]): round(float(svc_scores[i]), 4)
         for i in order
     }
 
-    # Exact linear feature attribution for LinearSVC top class
-    top_features = get_top_features_for_doc(X, top_idx, top_k=14)
+    top_features = get_top_features_for_doc(X_tfidf, top_idx, top_k=14)
     top_keywords = [feat[0] for feat in top_features]
 
-    # Model comparison table data for UI
-    model_comparison = [
-        {
-            "model": "Multinomial Naive Bayes",
-            "prediction": nb_pred,
-            "score": nb_score,
-            "score_type": "Probability",
-            "score_display": f"{round(nb_score * 100, 1)}% probability",
-            "test_accuracy": 0.9116,
-            "test_macro_f1": 0.9117,
-            "is_selected": False,
-        },
-        {
-            "model": "Logistic Regression",
-            "prediction": lr_pred,
-            "score": lr_score,
-            "score_type": "Probability",
-            "score_display": f"{round(lr_score * 100, 1)}% probability",
-            "test_accuracy": 0.9406,
-            "test_macro_f1": 0.9405,
-            "is_selected": False,
-        },
-        {
-            "model": "LinearSVC",
-            "prediction": top_class,
-            "score": round(top_score, 4),
-            "score_type": "Decision Score",
-            "score_display": f"{round(top_score, 2)} decision score (margin: {decision_margin:.2f})",
-            "decision_margin": decision_margin,
-            "uncertainty_level": uncertainty_level,
-            "test_accuracy": 0.9450,
-            "test_macro_f1": 0.9449,
-            "is_selected": True,
-        },
-    ]
-
     return {
-        "final_prediction": top_class,
-        "selected_model": "LinearSVC",
-        "selection_reason": "LinearSVC achieved the highest test Macro F1 (94.49%) among the evaluated individual classifiers.",
-        "model_comparison": model_comparison,
-        "model_performance": MODEL_PERFORMANCE,
-        "ensemble_experiments": ENSEMBLE_EXPERIMENTS,
         "predicted_class": top_class,
         "runner_up_class": runner_up_class,
         "decision_margin": decision_margin,
-        "uncertainty_level": uncertainty_level,
+        "is_anonymous": is_anonymous,
+        "final_destination": final_destination,
+        "model": "TF-IDF + Structural Features + LinearSVC",
         "top_score": round(top_score, 4),
         "runner_up_score": round(runner_up_score, 4),
         "decision_scores": decision_scores,
         "top_keywords": top_keywords,
         "top_features": top_features,
-        "top_two_domains": [
-            {"domain": top_class, "score": round(top_score, 4)},
-            {"domain": runner_up_class, "score": round(runner_up_score, 4)},
-        ],
         "text_length": text_length,
     }
 
 
 def get_model_metadata() -> Dict[str, Any]:
-    """
-    Returns architecture and training metadata for the active research model.
-    Used by the GET /model-info health endpoint.
-    """
+    """Returns metadata for the active production model."""
     return {
-        "model": "LinearSVC",
-        "C": float(getattr(linear_svc, "C", 0.5)),
-        "loss": str(getattr(linear_svc, "loss", "squared_hinge")),
+        "model": "TF-IDF + Structural Features + LinearSVC",
         "classes": CLASSES,
+        "provisional_margin_threshold": PROVISIONAL_MARGIN_THRESHOLD,
         "vectorizer_features": VOCAB_SIZE,
-        "source": "research/models/",
-        "research_model": True,
+        "source": "research/taxonomy_v2_structural/models/",
         "performance_metrics": {
-            "test_accuracy": 0.9450,
-            "test_macro_f1": 0.9449,
-            "test_support": 3870,
+            "augmented_test_macro_f1": 0.9462,
+            "base_v2_test_macro_f1": 0.9606,
+            "v1_baseline_macro_f1": 0.9312,
         },
-        "models_evaluated": MODEL_PERFORMANCE,
-        "ensemble_experiments": ENSEMBLE_EXPERIMENTS,
     }
+
+predict_document = predict_text

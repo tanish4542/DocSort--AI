@@ -49,7 +49,7 @@ const supportedDomains = [
     sampleTerms: "Patient, Clinical, Diagnosis, Therapy, Healthcare",
   },
   {
-    name: "Business and Finance",
+    name: "Business & Finance",
     icon: "📈",
     tagline: "Corporate finance, investments, and market economics",
     description: "Quarterly balance sheets, equity research, earnings reports, regulatory filings, and macroeconomic updates.",
@@ -79,14 +79,14 @@ const supportedDomains = [
     sampleTerms: "Team, Tournament, Match, League, Season",
   },
   {
-    name: "Science",
+    name: "Science & Academics",
     icon: "🔬",
-    tagline: "Empirical research, astrophysics, and physical sciences",
-    description: "Peer-reviewed scientific preprints, laboratory experimentation reports, ecological datasets, and astronomy findings.",
+    tagline: "Empirical research, academic courseware, syllabi, and lab manuals",
+    description: "Peer-reviewed scientific preprints, academic syllabi, lab manuals, course outlines, and research publications.",
     color: "#f43f5e",
     soft: "rgba(244, 63, 94, 0.16)",
     border: "rgba(244, 63, 94, 0.32)",
-    sampleTerms: "Research, Laboratory, Experiment, Species, Physics",
+    sampleTerms: "Syllabus, Lab Manual, Research, Course, Experiment",
   },
 ];
 

@@ -1,0 +1,19 @@
+model_name,category,precision,recall,f1_score
+Multinomial Naive Bayes,Business & Finance,94.8,91.62,93.18
+Multinomial Naive Bayes,Entertainment,89.12,96.02,92.44
+Multinomial Naive Bayes,Medical Health,95.65,87.34,91.31
+Multinomial Naive Bayes,Science & Academics,85.82,86.44,86.13
+Multinomial Naive Bayes,Sports,97.91,92.99,95.39
+Multinomial Naive Bayes,Technology & Computing,86.63,92.57,89.5
+Logistic Regression,Business & Finance,95.96,94.45,95.2
+Logistic Regression,Entertainment,95.18,95.18,95.18
+Logistic Regression,Medical Health,95.17,92.78,93.96
+Logistic Regression,Science & Academics,90.48,90.09,90.28
+Logistic Regression,Sports,98.17,95.19,96.65
+Logistic Regression,Technology & Computing,89.58,94.78,92.11
+LinearSVC,Business & Finance,95.74,94.14,94.93
+LinearSVC,Entertainment,94.89,95.29,95.09
+LinearSVC,Medical Health,94.63,94.04,94.33
+LinearSVC,Science & Academics,90.04,90.96,90.5
+LinearSVC,Sports,97.14,95.92,96.53
+LinearSVC,Technology & Computing,92.47,94.2,93.33

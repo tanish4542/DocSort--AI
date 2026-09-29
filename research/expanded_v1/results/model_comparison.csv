@@ -1,0 +1,10 @@
+model,view,version,accuracy,macro_precision,macro_recall,macro_f1,weighted_f1
+Multinomial Naive Bayes,Test A (V1 Test Set),V1 Baseline,0.9116,0.9129,0.9116,0.9117,0.9117
+Multinomial Naive Bayes,Test A (V1 Test Set),Expanded V1,0.8819,0.8858,0.8819,0.8817,0.8817
+Logistic Regression,Test A (V1 Test Set),V1 Baseline,0.9406,0.9406,0.9406,0.9405,0.9405
+Logistic Regression,Test A (V1 Test Set),Expanded V1,0.9289,0.9288,0.9289,0.9287,0.9287
+LinearSVC,Test A (V1 Test Set),V1 Baseline,0.945,0.9449,0.945,0.9449,0.9449
+LinearSVC,Test A (V1 Test Set),Expanded V1,0.9336,0.9335,0.9336,0.9333,0.9333
+Multinomial Naive Bayes,Test B (Expanded Test Set),Expanded V1,0.8865,0.8944,0.8865,0.8871,0.8871
+Logistic Regression,Test B (Expanded Test Set),Expanded V1,0.932,0.9331,0.932,0.9323,0.9323
+LinearSVC,Test B (Expanded Test Set),Expanded V1,0.944,0.9444,0.944,0.9442,0.9442

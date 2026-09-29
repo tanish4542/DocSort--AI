@@ -1,0 +1,19 @@
+filename,ground_truth_raw,ground_truth_normalized,known_or_ood,mnb_prediction,logreg_prediction,lsvc_prediction,top3_classes,top3_scores,lsvc_decision_margin,lsvc_correct
+Air India Web Booking eTicket (9WSBWJ) - TANISH.pdf,OOD,OOD,OOD,Business & Finance,Technology & Computing,Technology & Computing,"Technology & Computing, Business & Finance, Science & Academics","0.3784, -0.3593, -1.2847",0.7377,False
+ID card 25 Mar 2025.pdf,OOD,OOD,OOD,Technology & Computing,Technology & Computing,Technology & Computing,"Technology & Computing, Science & Academics, Sports","0.1984, -0.4333, -0.8219",0.6317,False
+LAB MANUAL.pdf,Science & Academics,Science & Academics,Known,Science & Academics,Technology & Computing,Technology & Computing,"Technology & Computing, Science & Academics, Sports","0.7845, 0.1819, -1.2932",0.6026,False
+MANVI_BIODATA.pdf,OOD,OOD,OOD,Medical Health,Science & Academics,Medical Health,"Medical Health, Science & Academics, Sports","-0.4657, -0.7481, -0.9829",0.2824,False
+Major Project Synopsis.pdf,Technology & Computing,Technology & Computing,Known,Technology & Computing,Technology & Computing,Technology & Computing,"Technology & Computing, Science & Academics, Medical Health","1.4629, -0.9846, -1.3008",2.4475,True
+Receipt_13Jul2025_130649.pdf,OOD,OOD,OOD,Business & Finance,Business & Finance,Business & Finance,"Business & Finance, Science & Academics, Sports","-0.0677, -0.5897, -0.7397",0.522,False
+Speaker1_What_to_Speak_Only.docx,Medical Health,Medical Health,Known,Medical Health,Medical Health,Medical Health,"Medical Health, Technology & Computing, Entertainment","1.9470, 0.3959, -2.9192",1.5512,True
+Syllabus.pdf,Science & Academics,Science & Academics,Known,Science & Academics,Technology & Computing,Technology & Computing,"Technology & Computing, Science & Academics, Business & Finance","1.3120, -0.1766, -1.7490",1.4885,False
+TANISH_ARORA_CV_OLD.pdf,OOD,OOD,OOD,Technology & Computing,Technology & Computing,Technology & Computing,"Technology & Computing, Science & Academics, Sports","2.2294, -0.6451, -1.9708",2.8744,False
+back-of-the-napkin.pdf,Business and Finance,Business & Finance,Known,Technology & Computing,Science & Academics,Science & Academics,"Science & Academics, Business & Finance, Technology & Computing","-0.3414, -0.8453, -0.9792",0.504,False
+MANVI_BIODATA.pdf,OOD,OOD,OOD,Medical Health,Science & Academics,Medical Health,"Medical Health, Science & Academics, Sports","-0.4657, -0.7481, -0.9829",0.2824,False
+01_Technology_Computing.pdf,Technology & Computing,Technology & Computing,Known,Technology & Computing,Technology & Computing,Technology & Computing,"Technology & Computing, Science & Academics, Medical Health","1.2336, -0.5454, -1.2696",1.779,True
+02_Medical_Health.pdf,Medical Health,Medical Health,Known,Medical Health,Medical Health,Medical Health,"Medical Health, Science & Academics, Sports","1.4913, -1.3378, -1.3753",2.829,True
+03_Business_Finance.pdf,Business and Finance,Business & Finance,Known,Business & Finance,Business & Finance,Business & Finance,"Business & Finance, Sports, Entertainment","2.4125, -1.4944, -1.5072",3.9068,True
+04_Entertainment.pdf,Entertainment,Entertainment,Known,Entertainment,Entertainment,Entertainment,"Entertainment, Science & Academics, Medical Health","3.3724, -1.9763, -2.0315",5.3487,True
+05_Sports.pdf,Sports,Sports,Known,Sports,Sports,Sports,"Sports, Science & Academics, Technology & Computing","3.7588, -1.8756, -2.0194",5.6344,True
+06_Science.pdf,Science,Science & Academics,Known,Science & Academics,Science & Academics,Science & Academics,"Science & Academics, Medical Health, Sports","2.0535, -1.1767, -1.3686",3.2302,True
+ood_miscellaneous_doc.pdf,OOD,OOD,OOD,Technology & Computing,Technology & Computing,Technology & Computing,"Technology & Computing, Medical Health, Entertainment","-0.2453, -0.8496, -0.9492",0.6043,False

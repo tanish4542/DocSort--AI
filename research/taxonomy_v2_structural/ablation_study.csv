@@ -1,0 +1,4 @@
+configuration,internal_accuracy,internal_macro_f1,science_academics_f1,technology_computing_f1,v2_base_test_macro_f1,frozen_v1_macro_f1
+Config A: TF-IDF Only,94.58,94.66,92.54,93.19,96.15,93.28
+Config B: Structural Only,23.93,19.25,28.85,44.62,16.73,16.83
+Config C: Combined (TF-IDF + Structural),94.53,94.62,92.47,93.05,96.06,93.12

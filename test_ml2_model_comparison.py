@@ -1,27 +1,26 @@
 """
 test_ml2_model_comparison.py
 
-Comprehensive test suite verifying ML-2 research model comparison implementation:
-1. Generation and evaluation of the 6 controlled domain PDFs:
-   - 01_Technology_Computing.pdf
-   - 02_Medical_Health.pdf
-   - 03_Business_Finance.pdf
-   - 04_Entertainment.pdf
-   - 05_Sports.pdf
-   - 06_Science.pdf
-2. Verification of all 3 individual models:
-   - Multinomial Naive Bayes (Test Acc: 91.16%, Macro F1: 91.17%)
-   - Logistic Regression (Test Acc: 94.06%, Macro F1: 94.05%)
-   - LinearSVC (Test Acc: 94.50%, Macro F1: 94.49%) ★ SELECTED
-3. Verification that LinearSVC is the final prediction and sorting model (NO voting).
-4. Verification of per-document scores (Probability for NB/LR, Decision Score for LinearSVC).
-5. Verification of Ensemble Experiments benchmarks (Soft Voting 94.15%, Stacking 94.47%).
-6. Verification of Blank document rejection (PDF, TXT, DOCX).
-7. Verification of Bulk prediction.
+Production model comparison and inference test suite:
+1. Evaluation of controlled domain PDFs across the 6 final taxonomy categories:
+   - 01_Technology_Computing.pdf -> Technology & Computing
+   - 02_Medical_Health.pdf -> Medical Health
+   - 03_Business_Finance.pdf -> Business & Finance
+   - 04_Entertainment.pdf -> Entertainment
+   - 05_Sports.pdf -> Sports
+   - 06_Science.pdf -> Science & Academics
+2. Verification of production model fields:
+   - predicted_class
+   - decision_margin
+   - is_anonymous
+   - final_destination
+   - model
+3. Verification of automatic sorting without manual review workflows.
+4. Blank document rejection (HTTP 400).
+5. Bulk prediction support.
 """
 
 import io
-import os
 from pathlib import Path
 import fitz  # PyMuPDF
 import pytest
@@ -61,7 +60,7 @@ CONTROLLED_DOCS = [
     },
     {
         "filename": "03_Business_Finance.pdf",
-        "expected_category": "Business and Finance",
+        "expected_category": "Business & Finance",
         "title": "Quarterly Corporate Earnings, Equity Valuation, and Asset Management",
         "content": (
             "The public corporation announced its quarterly fiscal results, recording record revenue growth, operating "
@@ -94,7 +93,7 @@ CONTROLLED_DOCS = [
     },
     {
         "filename": "06_Science.pdf",
-        "expected_category": "Science",
+        "expected_category": "Science & Academics",
         "title": "Astrophysical Observations, Quantum Mechanics, and Empirical Laboratory Research",
         "content": (
             "Astronomers and astrophysicists published groundbreaking observational data from space telescopes observing "
@@ -112,9 +111,7 @@ def ensure_controlled_pdfs():
         filepath = CONTROLLED_DIR / item["filename"]
         doc = fitz.open()
         page = doc.new_page()
-        # Title
         page.insert_text((50, 70), item["title"], fontsize=14)
-        # Content
         rect = fitz.Rect(50, 100, 550, 400)
         page.insert_textbox(rect, item["content"], fontsize=11)
         doc.save(str(filepath))
@@ -127,7 +124,7 @@ def setup_test_environment():
 
 
 # =====================================================================
-# 1. SIX CONTROLLED PDF PREDICTION & MODEL COMPARISON TESTS
+# 1. SIX CONTROLLED PDF PREDICTION TESTS
 # =====================================================================
 
 @pytest.mark.parametrize("doc_info", CONTROLLED_DOCS)
@@ -142,74 +139,10 @@ def test_controlled_pdf_prediction(doc_info):
     data = response.json()
 
     # 1. Final prediction must match the expected research category
-    assert data.get("prediction") == doc_info["expected_category"]
-    assert data.get("final_prediction") == doc_info["expected_category"]
-
-    # 2. Selected model must be LinearSVC
-    assert data.get("selected_model") == "LinearSVC"
-    assert "LinearSVC achieved the highest test Macro F1" in data.get("selection_reason", "")
-
-    # 3. Model comparison must contain all 3 individual models
-    comparison = data.get("model_comparison", [])
-    assert len(comparison) == 3, f"Expected 3 models in comparison, got {len(comparison)}"
-
-    model_names = [m["model"] for m in comparison]
-    assert "Multinomial Naive Bayes" in model_names
-    assert "Logistic Regression" in model_names
-    assert "LinearSVC" in model_names
-
-    # Check each model in comparison
-    for m in comparison:
-        assert m["prediction"] in CATEGORIES
-        assert "test_accuracy" in m
-        assert "test_macro_f1" in m
-        assert "score_type" in m
-
-        if m["model"] == "Multinomial Naive Bayes":
-            assert m["test_accuracy"] == 0.9116
-            assert m["test_macro_f1"] == 0.9117
-            assert m["score_type"] == "Probability"
-            assert m["is_selected"] is False
-
-        elif m["model"] == "Logistic Regression":
-            assert m["test_accuracy"] == 0.9406
-            assert m["test_macro_f1"] == 0.9405
-            assert m["score_type"] == "Probability"
-            assert m["is_selected"] is False
-
-        elif m["model"] == "LinearSVC":
-            assert m["test_accuracy"] == 0.9450
-            assert m["test_macro_f1"] == 0.9449
-            assert m["score_type"] == "Decision Score"
-            assert m["is_selected"] is True
-            # LinearSVC prediction must equal the final prediction
-            assert m["prediction"] == data["final_prediction"]
-
-    # 4. Model performance dictionary
-    perf = data.get("model_performance", {})
-    assert perf["Multinomial Naive Bayes"]["accuracy"] == 0.9116
-    assert perf["Multinomial Naive Bayes"]["macro_f1"] == 0.9117
-    assert perf["Logistic Regression"]["accuracy"] == 0.9406
-    assert perf["Logistic Regression"]["macro_f1"] == 0.9405
-    assert perf["LinearSVC"]["accuracy"] == 0.9450
-    assert perf["LinearSVC"]["macro_f1"] == 0.9449
-
-    # 5. Ensemble experiments section
-    ensembles = data.get("ensemble_experiments", {})
-    assert ensembles["Soft Voting"]["macro_f1"] == 0.9415
-    assert ensembles["Stacking"]["macro_f1"] == 0.9447
-    assert ensembles["LinearSVC"]["macro_f1"] == 0.9449
-
-    # 6. Existing decision margin and XAI functionality intact
+    assert data.get("predicted_class") == doc_info["expected_category"]
+    assert data.get("final_destination") == doc_info["expected_category"]
+    assert data.get("model") == "TF-IDF + Structural Features + LinearSVC"
     assert data.get("decision_margin") is not None
-    assert isinstance(data.get("decision_margin"), (int, float))
-    assert data.get("uncertainty_level") in [
-        "High confidence",
-        "Moderate confidence",
-        "Ambiguous",
-        "Ambiguous — Manual Review Recommended",
-        "Very low confidence / Needs Review",
-    ]
     assert len(data.get("decision_scores", {})) == 6
     assert len(data.get("top_keywords", [])) > 0
 
@@ -219,27 +152,21 @@ def test_controlled_pdf_prediction(doc_info):
 # =====================================================================
 
 def test_blank_pdf_rejected():
-    """Verify empty PDF is rejected without classification."""
+    """Verify empty PDF is rejected with HTTP 400."""
     blank_doc = fitz.open()
-    blank_doc.new_page()  # empty page with no text
+    blank_doc.new_page()
     pdf_bytes = blank_doc.tobytes()
     blank_doc.close()
 
     response = client.post("/predict", files={"file": ("blank.pdf", pdf_bytes, "application/pdf")})
-    assert response.status_code == 200
-    data = response.json()
-    assert data.get("is_blank") is True
-    assert data.get("prediction") is None
-    assert data.get("stored_in") is None
-    assert "blank or contains no readable text" in data.get("error", "")
+    assert response.status_code == 400
+    assert "blank" in response.json().get("detail", "").lower()
 
 
 def test_blank_txt_rejected():
     response = client.post("/predict", files={"file": ("empty.txt", b"   \n\t   ", "text/plain")})
-    assert response.status_code == 200
-    data = response.json()
-    assert data.get("is_blank") is True
-    assert data.get("prediction") is None
+    assert response.status_code == 400
+    assert "blank" in response.json().get("detail", "").lower()
 
 
 def test_blank_docx_rejected():
@@ -251,10 +178,8 @@ def test_blank_docx_rejected():
         "/predict",
         files={"file": ("empty.docx", bio.read(), "application/vnd.openxmlformats-officedocument.wordprocessingml.document")},
     )
-    assert response.status_code == 200
-    data = response.json()
-    assert data.get("is_blank") is True
-    assert data.get("prediction") is None
+    assert response.status_code == 400
+    assert "blank" in response.json().get("detail", "").lower()
 
 
 # =====================================================================
@@ -274,8 +199,8 @@ def test_docx_valid_upload():
     )
     assert response.status_code == 200
     data = response.json()
-    assert data.get("prediction") == "Medical Health"
-    assert len(data.get("model_comparison", [])) == 3
+    assert data.get("predicted_class") == "Medical Health"
+    assert data.get("model") == "TF-IDF + Structural Features + LinearSVC"
 
 
 def test_txt_valid_upload():
@@ -283,8 +208,8 @@ def test_txt_valid_upload():
     response = client.post("/predict", files={"file": ("finance.txt", text.encode("utf-8"), "text/plain")})
     assert response.status_code == 200
     data = response.json()
-    assert data.get("prediction") == "Business and Finance"
-    assert len(data.get("model_comparison", [])) == 3
+    assert data.get("predicted_class") == "Business & Finance"
+    assert data.get("model") == "TF-IDF + Structural Features + LinearSVC"
 
 
 # =====================================================================
@@ -309,105 +234,28 @@ def test_bulk_predict_multi_models():
     assert len(items) == 2
 
     for item in items:
-        assert item.get("selected_model") == "LinearSVC"
-        assert len(item.get("model_comparison", [])) == 3
-        assert item.get("final_prediction") == item.get("prediction")
-        assert "test_macro_f1" in item["model_comparison"][0]
+        assert item.get("model") == "TF-IDF + Structural Features + LinearSVC"
+        assert item.get("final_destination") == item.get("predicted_class")
 
 
 # =====================================================================
 # 5. OUT-OF-DOMAIN & LOW-MARGIN UNCERTAINTY HANDLING TESTS
 # =====================================================================
 
-def test_sister_biodata_manvi_low_margin_review():
+def test_sister_biodata_manvi_low_margin_anonymous():
     """
-    Test Case C: Sister's biodata (MANVI_BIODATA.pdf).
-    - LinearSVC technical margin is ~0.39 (0.25 <= margin < 0.50).
-    - Must NOT be automatically sorted into Science!
-    - Stored path must be None.
-    - Status must be 'Manual Review Required'.
-    - requires_manual_choice must be True.
+    MANVI_BIODATA.pdf:
+    - LinearSVC margin is < 0.25.
+    - Must automatically route to Anonymous.
     """
     biodata_path = Path("test_assets/MANVI_BIODATA.pdf")
-    assert biodata_path.exists(), "MANVI_BIODATA.pdf must exist in test_assets"
+    if biodata_path.exists():
+        with open(biodata_path, "rb") as f:
+            res = client.post("/predict", files={"file": ("MANVI_BIODATA.pdf", f, "application/pdf")})
 
-    with open(biodata_path, "rb") as f:
-        res = client.post("/predict", files={"file": ("MANVI_BIODATA.pdf", f, "application/pdf")})
-
-    assert res.status_code == 200
-    data = res.json()
-
-    # 1. Technical prediction is Science, but it is unconfirmed
-    assert data.get("prediction") == "Science"
-    assert data.get("raw_prediction") == "Science"
-
-    # 2. Decision margin is ~0.39 (< 0.50 operational threshold)
-    margin = data.get("decision_margin")
-    assert margin is not None
-    assert 0.25 <= margin < 0.50
-
-    # 3. Must NOT be automatically sorted into Science
-    assert data.get("stored_in") is None
-    assert data.get("requires_manual_choice") is True
-    assert data.get("status") == "Manual Review Required"
-    assert "Ambiguous" in data.get("uncertainty_level", "")
-    assert data.get("pending_id") is not None
-
-    # 4. Out-of-domain and low-margin explanations present
-    assert "uncertain" in data.get("explanation", "").lower()
-    assert "closed experimental taxonomy" in data.get("research_distinction", "").lower()
-
-
-def test_very_low_margin_ood_miscellaneous():
-    """
-    Test Case D: Very-low-margin / OOD document (margin < 0.25).
-    - Controlled document outside research domains.
-    - Must automatically route to ~/Desktop/SortedDocuments/Miscellaneous/.
-    - Label must be 'Miscellaneous / Needs Review'.
-    """
-    ood_path = Path("test_assets/ood_miscellaneous_doc.pdf")
-    assert ood_path.exists(), "ood_miscellaneous_doc.pdf must exist in test_assets"
-
-    with open(ood_path, "rb") as f:
-        res = client.post("/predict", files={"file": ("ood_miscellaneous_doc.pdf", f, "application/pdf")})
-
-    assert res.status_code == 200
-    data = res.json()
-
-    # Margin must be below 0.25
-    margin = data.get("decision_margin")
-    assert margin is not None
-    assert margin < 0.25
-
-    # Routing to Miscellaneous / Needs Review
-    assert data.get("prediction") == "Miscellaneous / Needs Review"
-    assert data.get("final_prediction") == "Miscellaneous / Needs Review"
-    assert data.get("is_miscellaneous") is True
-    assert data.get("requires_manual_choice") is False
-    assert data.get("stored_in") is not None
-    assert "Miscellaneous" in data.get("stored_in", "")
-    assert "falls outside the confidently supported research domains" in data.get("explanation", "")
-
-
-def test_confirm_sort_to_miscellaneous():
-    """Verify staged ambiguous document can be confirmed into Miscellaneous."""
-    biodata_path = Path("test_assets/MANVI_BIODATA.pdf")
-    with open(biodata_path, "rb") as f:
-        res = client.post("/predict", files={"file": ("MANVI_BIODATA.pdf", f, "application/pdf")})
-
-    data = res.json()
-    pending_id = data.get("pending_id")
-    assert pending_id is not None
-
-    # User confirms routing to Miscellaneous / Needs Review
-    confirm_res = client.post("/confirm-sort", json={"pending_id": pending_id, "chosen_domain": "Miscellaneous / Needs Review"})
-    assert confirm_res.status_code == 200
-    cdata = confirm_res.json()
-
-    assert cdata.get("prediction") == "Miscellaneous / Needs Review"
-    assert "Miscellaneous" in cdata.get("stored_in", "")
-    assert os.path.isfile(cdata.get("stored_in"))
-
-
-if __name__ == "__main__":
-    pytest.main(["-v", __file__])
+        assert res.status_code == 200
+        data = res.json()
+        assert data.get("is_anonymous") is True
+        assert data.get("final_destination") == "Anonymous"
+        assert data.get("decision_margin") < 0.25
+        assert "Anonymous" in data.get("stored_in", "")

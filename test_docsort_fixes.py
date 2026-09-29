@@ -1,37 +1,35 @@
 """
 test_docsort_fixes.py
 
-Automated test suite verifying the 3 DocSort AI application fixes:
-1. Blank/empty document validation (PDF, TXT, DOCX, whitespace, control noise)
+Automated test suite verifying the DocSort AI application behavior:
+1. Blank/empty document validation (PDF, TXT, DOCX, whitespace, control noise) -> HTTP 400 rejection
 2. Machine Learning wording & 6 categories consistency
-3. All six research categories classification via finalized LinearSVC model:
+3. All six research categories classification via production model:
    - Technology & Computing
+   - Science & Academics
    - Medical Health
-   - Business and Finance
+   - Business & Finance
    - Entertainment
    - Sports
-   - Science
 """
 
-import os
 import io
 import pytest
 from fastapi.testclient import TestClient
 from docx import Document
 from PyPDF2 import PdfWriter
 
-# Import FastAPI app from backend.main
 from backend.main import app, CATEGORIES, validate_document_content, BLANK_DOCUMENT_ERROR_MESSAGE
 
 client = TestClient(app)
 
 EXPECTED_CATEGORIES = [
     "Technology & Computing",
+    "Science & Academics",
     "Medical Health",
-    "Business and Finance",
+    "Business & Finance",
     "Entertainment",
     "Sports",
-    "Science",
 ]
 
 
@@ -41,22 +39,14 @@ EXPECTED_CATEGORIES = [
 
 def test_unit_validate_document_content():
     """Direct unit tests for validation logic."""
-    # Blank/None
     assert validate_document_content(None)[0] is False
     assert validate_document_content("")[0] is False
     assert validate_document_content("    \t\n\r  ")[0] is False
-    
-    # Invisible and control characters
     assert validate_document_content("\x00\x01\x1f\x7f\u200b\u200c\ufeff")[0] is False
     assert validate_document_content("   \u200b\u200e\ufeff   ")[0] is False
-
-    # Punctuation only
     assert validate_document_content("--- ... ,,, !!!")[0] is False
-
-    # Extremely short / 1-letter noise
     assert validate_document_content("a")[0] is False
 
-    # Valid short documents
     ok_receipt, text_receipt = validate_document_content("Receipt #104 Total: $24.50")
     assert ok_receipt is True
     assert "Receipt #104 Total: $24.50" in text_receipt
@@ -67,42 +57,32 @@ def test_unit_validate_document_content():
 
 
 def test_blank_txt_upload():
-    """Empty TXT should be rejected before model inference with no category or sorting."""
+    """Empty TXT should be rejected with HTTP 400."""
     files = {"file": ("empty.txt", b"", "text/plain")}
     response = client.post("/predict", files=files)
-    assert response.status_code == 200
-    data = response.json()
-    assert data.get("is_blank") is True
-    assert data.get("prediction") is None
-    assert data.get("predicted_class") is None
-    assert data.get("stored_in") is None
-    assert "blank or contains no readable text" in data.get("error", "")
+    assert response.status_code == 400
+    assert "blank" in response.json().get("detail", "").lower()
 
 
 def test_whitespace_only_txt_upload():
-    """Whitespace-only TXT should be rejected."""
+    """Whitespace-only TXT should be rejected with HTTP 400."""
     files = {"file": ("spaces.txt", b"   \n\t  \r\n   ", "text/plain")}
     response = client.post("/predict", files=files)
-    assert response.status_code == 200
-    data = response.json()
-    assert data.get("is_blank") is True
-    assert data.get("prediction") is None
-    assert data.get("stored_in") is None
+    assert response.status_code == 400
+    assert "blank" in response.json().get("detail", "").lower()
 
 
 def test_control_chars_txt_upload():
-    """TXT containing only invisible/control chars should be rejected."""
+    """TXT containing only invisible/control chars should be rejected with HTTP 400."""
     noise_bytes = "\x00\x05\x1b\x7f\u200b\u200c\ufeff".encode("utf-8")
     files = {"file": ("noise.txt", noise_bytes, "text/plain")}
     response = client.post("/predict", files=files)
-    assert response.status_code == 200
-    data = response.json()
-    assert data.get("is_blank") is True
-    assert data.get("prediction") is None
+    assert response.status_code == 400
+    assert "blank" in response.json().get("detail", "").lower()
 
 
 def test_blank_pdf_upload():
-    """Empty PDF with blank page should be rejected."""
+    """Empty PDF with blank page should be rejected with HTTP 400."""
     writer = PdfWriter()
     writer.add_blank_page(width=100, height=100)
     pdf_bytes = io.BytesIO()
@@ -111,16 +91,12 @@ def test_blank_pdf_upload():
 
     files = {"file": ("blank.pdf", pdf_bytes.read(), "application/pdf")}
     response = client.post("/predict", files=files)
-    assert response.status_code == 200
-    data = response.json()
-    assert data.get("is_blank") is True
-    assert data.get("prediction") is None
-    assert data.get("stored_in") is None
-    assert "blank or contains no readable text" in data.get("error", "")
+    assert response.status_code == 400
+    assert "blank" in response.json().get("detail", "").lower()
 
 
 def test_blank_docx_upload():
-    """Empty DOCX should be rejected."""
+    """Empty DOCX should be rejected with HTTP 400."""
     doc = Document()
     docx_bytes = io.BytesIO()
     doc.save(docx_bytes)
@@ -128,23 +104,18 @@ def test_blank_docx_upload():
 
     files = {"file": ("blank.docx", docx_bytes.read(), "application/vnd.openxmlformats-officedocument.wordprocessingml.document")}
     response = client.post("/predict", files=files)
-    assert response.status_code == 200
-    data = response.json()
-    assert data.get("is_blank") is True
-    assert data.get("prediction") is None
-    assert data.get("stored_in") is None
+    assert response.status_code == 400
+    assert "blank" in response.json().get("detail", "").lower()
 
 
 def test_valid_short_document():
     """Legitimate short document should be allowed and processed."""
-    content = b"Biology Lab Report: Microscopic cellular examination of plant specimens."
+    content = b"Biology Lab Report: Microscopic cellular examination of plant specimens in academic course laboratory."
     files = {"file": ("lab_note.txt", content, "text/plain")}
     response = client.post("/predict", files=files)
     assert response.status_code == 200
     data = response.json()
-    assert data.get("is_blank") is not True
-    assert data.get("prediction") in CATEGORIES
-    assert data.get("prediction") is not None
+    assert data.get("predicted_class") in CATEGORIES
 
 
 # =====================================================================
@@ -161,7 +132,7 @@ def test_technology_document():
     response = client.post("/predict", files=files)
     assert response.status_code == 200
     data = response.json()
-    assert data.get("prediction") == "Technology & Computing"
+    assert data.get("predicted_class") == "Technology & Computing"
 
 
 def test_medical_document():
@@ -174,7 +145,7 @@ def test_medical_document():
     response = client.post("/predict", files=files)
     assert response.status_code == 200
     data = response.json()
-    assert data.get("prediction") == "Medical Health"
+    assert data.get("predicted_class") == "Medical Health"
 
 
 def test_finance_document():
@@ -187,7 +158,7 @@ def test_finance_document():
     response = client.post("/predict", files=files)
     assert response.status_code == 200
     data = response.json()
-    assert data.get("prediction") == "Business and Finance"
+    assert data.get("predicted_class") == "Business & Finance"
 
 
 def test_entertainment_document():
@@ -200,7 +171,7 @@ def test_entertainment_document():
     response = client.post("/predict", files=files)
     assert response.status_code == 200
     data = response.json()
-    assert data.get("prediction") == "Entertainment"
+    assert data.get("predicted_class") == "Entertainment"
 
 
 def test_sports_document():
@@ -213,7 +184,7 @@ def test_sports_document():
     response = client.post("/predict", files=files)
     assert response.status_code == 200
     data = response.json()
-    assert data.get("prediction") == "Sports"
+    assert data.get("predicted_class") == "Sports"
 
 
 def test_science_document():
@@ -226,7 +197,7 @@ def test_science_document():
     response = client.post("/predict", files=files)
     assert response.status_code == 200
     data = response.json()
-    assert data.get("prediction") == "Science"
+    assert data.get("predicted_class") == "Science & Academics"
 
 
 # =====================================================================
@@ -234,19 +205,14 @@ def test_science_document():
 # =====================================================================
 
 def test_model_info_and_categories_endpoints():
-    """Verify backend exposes exact 6 categories and LinearSVC research model."""
+    """Verify backend exposes exact 6 categories and production model."""
     res = client.get("/model-info")
     assert res.status_code == 200
     info = res.json()
-    assert info.get("model") == "LinearSVC"
-    assert info.get("classes") == sorted(EXPECTED_CATEGORIES)
-    assert info.get("research_model") is True
+    assert info.get("model") == "TF-IDF + Structural Features + LinearSVC"
+    assert set(info.get("classes")) == set(EXPECTED_CATEGORIES)
 
     res_cat = client.get("/categories")
     assert res_cat.status_code == 200
     cats = res_cat.json().get("categories", [])
-    assert sorted(cats) == sorted(EXPECTED_CATEGORIES)
-
-
-if __name__ == "__main__":
-    pytest.main(["-v", __file__])
+    assert cats == EXPECTED_CATEGORIES
