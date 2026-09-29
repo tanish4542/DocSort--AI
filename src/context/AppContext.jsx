@@ -270,6 +270,7 @@ function mapApiResultToFrontend(payload, file) {
 
   const result = {
     filename: (typeof payload === "object" && payload?.filename) || file?.name || "document",
+    fileBlob: file || null,
     error: errorMessage,
     isBlank,
     prediction: isBlank ? null : normalizedPrediction,
@@ -474,6 +475,60 @@ function validateFile(file) {
   return "";
 }
 
+const isFileSystemAccessSupported =
+  typeof window !== "undefined" && typeof window.showDirectoryPicker === "function";
+
+async function getUniqueFileNameInDirectory(categoryDirHandle, cleanFilename) {
+  let targetName = cleanFilename || "document";
+  let counter = 1;
+  const lastDot = cleanFilename.lastIndexOf(".");
+  const stem = lastDot > 0 ? cleanFilename.slice(0, lastDot) : cleanFilename;
+  const ext = lastDot > 0 ? cleanFilename.slice(lastDot) : "";
+
+  while (true) {
+    try {
+      await categoryDirHandle.getFileHandle(targetName, { create: false });
+      targetName = `${stem} (${counter})${ext}`;
+      counter++;
+    } catch (err) {
+      return targetName;
+    }
+  }
+}
+
+async function saveFileToLocalDirectory(dirHandle, fileBlob, categoryName, originalFilename) {
+  if (!dirHandle || !fileBlob) return null;
+
+  const categoryDir = await dirHandle.getDirectoryHandle(categoryName, { create: true });
+  const cleanName = originalFilename || fileBlob.name || "document";
+  const uniqueName = await getUniqueFileNameInDirectory(categoryDir, cleanName);
+
+  const fileHandle = await categoryDir.getFileHandle(uniqueName, { create: true });
+  const writable = await fileHandle.createWritable();
+  await writable.write(fileBlob);
+  await writable.close();
+
+  return {
+    saved: true,
+    folderName: dirHandle.name || "SortedDocuments",
+    categoryName,
+    savedFilename: uniqueName,
+    localPath: `${dirHandle.name || "SortedDocuments"}/${categoryName}/${uniqueName}`,
+  };
+}
+
+function downloadFileFallback(fileBlob, originalFilename) {
+  if (!fileBlob) return;
+  const url = URL.createObjectURL(fileBlob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = originalFilename || fileBlob.name || "document";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
 function AppProvider({ children }) {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [prediction, setPrediction] = useState(() =>
@@ -482,6 +537,8 @@ function AppProvider({ children }) {
   const [history, setHistory] = useState(() => readStoredState(window.localStorage, historyStorageKey, []));
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [localDirHandle, setLocalDirHandle] = useState(null);
+  const [localDirName, setLocalDirName] = useState("");
 
   useEffect(() => {
     writeStoredState(window.sessionStorage, predictionStorageKey, prediction);
@@ -663,6 +720,38 @@ function AppProvider({ children }) {
         return mapApiResultToFrontend(row, file);
       });
 
+      // Automatic Real-Time Local Saving if local folder is selected
+      for (let i = 0; i < enrichedList.length; i++) {
+        const item = enrichedList[i];
+        const fileObj = files.find((f) => f.name === item?.filename) || files[i] || files[0];
+        if (localDirHandle && fileObj && !item.isBlank && !item.error) {
+          const categoryName = item.is_anonymous
+            ? "Anonymous"
+            : item.final_destination || item.prediction || "Anonymous";
+          try {
+            const saveRes = await saveFileToLocalDirectory(
+              localDirHandle,
+              fileObj,
+              categoryName,
+              item.filename
+            );
+            if (saveRes) {
+              item.savedLocally = true;
+              item.localSaveResult = saveRes;
+              item.localPath = saveRes.localPath;
+              item.localCategory = categoryName;
+              item.localFilename = saveRes.savedFilename;
+            }
+          } catch (saveErr) {
+            console.warn("Could not auto-save to local folder:", saveErr);
+            item.savedLocally = false;
+            item.localSaveError = saveErr?.message || "Permission or write error";
+          }
+        } else {
+          item.savedLocally = false;
+        }
+      }
+
       const finalPrediction = enrichedList.length === 1 ? enrichedList[0] : enrichedList;
       setPrediction(finalPrediction);
 
@@ -690,6 +779,91 @@ function AppProvider({ children }) {
     }
   };
 
+  const selectLocalDirectory = async () => {
+    if (!isFileSystemAccessSupported) {
+      setError(
+        "File System Access API is not supported in this browser. You can use direct file download instead."
+      );
+      return null;
+    }
+    try {
+      const handle = await window.showDirectoryPicker({
+        id: "docsort-target-directory",
+        mode: "readwrite",
+      });
+      if (handle) {
+        setLocalDirHandle(handle);
+        setLocalDirName(handle.name || "SortedDocuments");
+        setError("");
+        return handle;
+      }
+    } catch (err) {
+      if (err.name !== "AbortError") {
+        console.error("Directory picker error:", err);
+      }
+      return null;
+    }
+  };
+
+  const saveResultToFolder = async (targetResult, optionalDirHandle) => {
+    let handle = optionalDirHandle || localDirHandle;
+    if (!handle) {
+      handle = await selectLocalDirectory();
+      if (!handle) return null;
+    }
+
+    const filename = targetResult?.filename;
+    const fileObj =
+      targetResult?.fileBlob ||
+      (selectedFiles && selectedFiles.find((f) => f.name === filename)) ||
+      (selectedFiles && selectedFiles[0]);
+
+    if (!fileObj) {
+      throw new Error("Original file data is not available in browser memory.");
+    }
+
+    const categoryName = targetResult.is_anonymous
+      ? "Anonymous"
+      : targetResult.final_destination || targetResult.prediction || "Anonymous";
+
+    const saveRes = await saveFileToLocalDirectory(handle, fileObj, categoryName, filename);
+    if (saveRes) {
+      const updateResult = (p) =>
+        p.filename === filename
+          ? {
+              ...p,
+              savedLocally: true,
+              localSaveResult: saveRes,
+              localPath: saveRes.localPath,
+              localCategory: categoryName,
+              localFilename: saveRes.savedFilename,
+            }
+          : p;
+
+      setPrediction((prev) => {
+        if (Array.isArray(prev)) {
+          return prev.map(updateResult);
+        }
+        return updateResult(prev);
+      });
+      return saveRes;
+    }
+    return null;
+  };
+
+  const downloadResultFile = (targetResult) => {
+    const filename = targetResult?.filename;
+    const fileObj =
+      targetResult?.fileBlob ||
+      (selectedFiles && selectedFiles.find((f) => f.name === filename)) ||
+      (selectedFiles && selectedFiles[0]);
+
+    if (!fileObj) {
+      throw new Error("File data is not available.");
+    }
+    downloadFileFallback(fileObj, targetResult?.localFilename || filename);
+  };
+
   const value = useMemo(
     () => ({
       backendBaseUrl,
@@ -707,8 +881,24 @@ function AppProvider({ children }) {
       validateFile,
       formatFileSize,
       domainPalette,
+      localDirHandle,
+      setLocalDirHandle,
+      localDirName,
+      isFileSystemAccessSupported,
+      selectLocalDirectory,
+      saveResultToFolder,
+      downloadResultFile,
     }),
-    [error, history, loading, prediction, selectedFiles]
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [
+      error,
+      history,
+      loading,
+      localDirHandle,
+      localDirName,
+      prediction,
+      selectedFiles,
+    ]
   );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

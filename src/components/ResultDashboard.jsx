@@ -1,13 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useAppState } from "../context/AppContext";
 
-function folderLabelFromPath(storedPath) {
-  if (!storedPath || typeof storedPath !== "string") return "—";
-  const parts = storedPath.split(/[/\\]/).filter(Boolean);
-  if (parts.length < 2) return parts[0] || "—";
-  return parts[parts.length - 2];
-}
-
 function fileNameOnly(name) {
   if (!name) return "—";
   const parts = String(name).split(/[/\\]/);
@@ -18,8 +11,28 @@ function fileNameOnly(name) {
 const VERY_LOW_MARGIN = 0.25;
 
 function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
-  const { domainPalette } = useAppState();
+  const {
+    domainPalette,
+    isFileSystemAccessSupported,
+    saveResultToFolder,
+    downloadResultFile,
+    localDirName,
+  } = useAppState();
   const [scoresExpanded, setScoresExpanded] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
+
+  const handleManualSave = async () => {
+    try {
+      setIsSaving(true);
+      setSaveError("");
+      await saveResultToFolder(result);
+    } catch (err) {
+      setSaveError(err?.message || "Failed to save file locally.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const decisionMargin =
     result?.decisionMargin != null && !Number.isNaN(Number(result.decisionMargin))
@@ -36,11 +49,6 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
   const displayCategory = isAnonymous ? "Anonymous" : result?.final_destination || result?.predicted_class || result?.prediction || "Unknown";
   const displayTheme = domainPalette[displayCategory] || domainPalette.Anonymous;
   const originalFileName = fileNameOnly(result?.filename) || "document";
-
-  const folderName = useMemo(() => {
-    if (isAnonymous) return "Anonymous";
-    return folderLabelFromPath(result?.storedIn);
-  }, [result?.storedIn, isAnonymous]);
 
   // Clean, filtered display tokens for feature attribution (removing short, numeric or noisy fragments)
   const cleanKeywords = useMemo(() => {
@@ -335,16 +343,80 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
         </section>
 
         {/* 5. SORTING RESULT / LOCAL STORAGE */}
-        {result.storedIn && (
-          <section className="storagePanel cardRise">
-            <span className="eyebrow">Local storage</span>
-            <h3>Saved to disk</h3>
-            <code className="pathBox">{result.storedIn}</code>
-            <p className="storagePanel__sub">
-              Organized into <strong>{folderName}</strong> under your Desktop folder.
-            </p>
-          </section>
-        )}
+        <section className="storagePanel cardRise">
+          <div className="storagePanel__head">
+            <span className="eyebrow">{result.savedLocally ? "Local Folder Organization" : "Sorting Destination"}</span>
+            <h3>{result.savedLocally ? "Saved to your local folder" : "Classification Destination"}</h3>
+          </div>
+
+          {result.savedLocally ? (
+            <div className="storageStatusCard storageStatusCard--success">
+              <div className="storageStatusCard__badge">
+                <span className="statusDot statusDot--green" />
+                <strong>Saved locally</strong>
+              </div>
+              <p className="storageStatusCard__desc">
+                Organized into <strong>{result.localCategory || displayCategory}</strong> as{" "}
+                <span className="mono">{result.localFilename || originalFileName}</span>.
+              </p>
+              <code className="pathBox">
+                {result.localPath || `${localDirName || "SortedDocuments"}/${result.localCategory || displayCategory}/${result.localFilename || originalFileName}`}
+              </code>
+              <div className="storageStatusCard__actions" style={{ marginTop: "14px", display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <button
+                  className="button button--secondary"
+                  type="button"
+                  onClick={() => downloadResultFile(result)}
+                  style={{ fontSize: "0.85rem", padding: "8px 16px" }}
+                >
+                  ⬇️ Download a Copy
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="storageStatusCard storageStatusCard--pending">
+              <div className="storageStatusCard__badge" style={{ color: "#92400e" }}>
+                <span className="statusDot statusDot--amber" />
+                <strong>Destination Category: {result.final_destination || displayCategory}</strong>
+              </div>
+              <p className="storageStatusCard__desc">
+                Target Folder: <strong>{displayCategory}</strong>
+                {isAnonymous && <span> (Low Margin &lt; {VERY_LOW_MARGIN.toFixed(2)})</span>}
+              </p>
+              <p className="storagePanel__sub" style={{ margin: "6px 0 14px 0" }}>
+                {isFileSystemAccessSupported
+                  ? "Select your local SortedDocuments folder to save this file directly to your computer, or download it."
+                  : "Direct folder access is not supported in this browser. You can download the classified file directly."}
+              </p>
+              {saveError && (
+                <p style={{ color: "#dc2626", fontSize: "0.85rem", margin: "0 0 10px" }}>
+                  ⚠️ {saveError}
+                </p>
+              )}
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+                {isFileSystemAccessSupported && (
+                  <button
+                    className="button button--primary"
+                    type="button"
+                    onClick={handleManualSave}
+                    disabled={isSaving}
+                    style={{ fontSize: "0.88rem", padding: "10px 18px" }}
+                  >
+                    {isSaving ? "Saving to Folder..." : "📁 Choose Local Folder & Save"}
+                  </button>
+                )}
+                <button
+                  className="button button--secondary"
+                  type="button"
+                  onClick={() => downloadResultFile(result)}
+                  style={{ fontSize: "0.88rem", padding: "10px 18px" }}
+                >
+                  ⬇️ Download Sorted File
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
 
         {/* 6. XAI / LINEAR FEATURE ATTRIBUTION */}
         <section className="keywordPanel cardRise">

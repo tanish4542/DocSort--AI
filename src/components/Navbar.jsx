@@ -1,10 +1,12 @@
 import React from "react";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useAppState } from "../context/AppContext";
 
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
   const aboutActive = location.pathname === "/" && location.hash === "#about";
+  const { localDirName, isFileSystemAccessSupported, selectLocalDirectory } = useAppState();
 
   return (
     <header className="topBar">
@@ -22,6 +24,17 @@ function Navbar() {
       </div>
 
       <nav className="navLinks" aria-label="Primary navigation">
+        {isFileSystemAccessSupported && (
+          <button
+            className="folderBadge"
+            type="button"
+            onClick={selectLocalDirectory}
+            title={localDirName ? `Active local folder: ${localDirName}` : "Choose local sorting folder"}
+          >
+            <span className="folderBadge__icon">📁</span>
+            <span className="folderBadge__text">{localDirName || "Choose Folder"}</span>
+          </button>
+        )}
         <NavLink to="/" end className={({ isActive }) => `navLinks__item ${isActive ? "navLinks__item--active" : ""}`}>
           Home
         </NavLink>

@@ -21,6 +21,10 @@ function Upload() {
     submitDocument,
     formatFileSize,
     setPrediction,
+    localDirHandle,
+    localDirName,
+    isFileSystemAccessSupported,
+    selectLocalDirectory,
   } = useAppState();
 
   const clearSelection = () => {
@@ -105,9 +109,41 @@ function Upload() {
             <h1>Classify and sort a document in one click</h1>
             <p>
               Drop a file into the workspace, send it to the FastAPI backend, and get a prediction
-              plus a stored folder path back.
+              plus real-time sorting into your local folders.
             </p>
           </div>
+
+          {isFileSystemAccessSupported && (
+            <div className={`localFolderBanner ${localDirHandle ? "localFolderBanner--active" : ""}`}>
+              <div className="localFolderBanner__info">
+                <span className="localFolderBanner__icon">📁</span>
+                <div>
+                  <h4 className="localFolderBanner__title">
+                    {localDirHandle ? (
+                      <>
+                        Local Auto-Save: <strong>{localDirName}</strong>
+                      </>
+                    ) : (
+                      "Real-time Local Folder Sorting"
+                    )}
+                  </h4>
+                  <p className="localFolderBanner__sub">
+                    {localDirHandle
+                      ? `Classified documents will be saved directly into subfolders inside ${localDirName} on your Mac.`
+                      : `Choose your local "SortedDocuments" folder so classified files are saved directly to your computer.`}
+                  </p>
+                </div>
+              </div>
+              <button
+                className={`button ${localDirHandle ? "button--secondary" : "button--primary"}`}
+                type="button"
+                onClick={selectLocalDirectory}
+                style={{ whiteSpace: "nowrap", fontSize: "0.88rem", padding: "10px 18px" }}
+              >
+                {localDirHandle ? "Change Folder" : "Choose Sorting Folder"}
+              </button>
+            </div>
+          )}
 
           <UploadBox
             fileInputRef={fileInputRef}
