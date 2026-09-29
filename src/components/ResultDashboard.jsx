@@ -33,17 +33,30 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
       (decisionMargin != null && decisionMargin < VERY_LOW_MARGIN)
   );
 
-  const displayCategory = isAnonymous ? "Anonymous" : result?.final_destination || result?.prediction || "Unknown";
+  const displayCategory = isAnonymous ? "Anonymous" : result?.final_destination || result?.predicted_class || result?.prediction || "Unknown";
   const displayTheme = domainPalette[displayCategory] || domainPalette.Anonymous;
+  const originalFileName = fileNameOnly(result?.filename) || "document";
 
   const folderName = useMemo(() => {
     if (isAnonymous) return "Anonymous";
     return folderLabelFromPath(result?.storedIn);
   }, [result?.storedIn, isAnonymous]);
 
-  const keywords = useMemo(() => {
+  // Clean, filtered display tokens for feature attribution (removing short, numeric or noisy fragments)
+  const cleanKeywords = useMemo(() => {
     const raw = result?.keywords && result.keywords.length ? result.keywords : result?.fallbackKeywords || [];
-    return raw.slice(0, 14);
+    return raw
+      .filter((word) => {
+        if (!word || typeof word !== "string") return false;
+        const trimmed = word.trim();
+        if (trimmed.length < 3) return false;
+        // Exclude purely numeric or alphanumeric noise like "2025", "104", "1a"
+        if (/^\d+$/.test(trimmed) || /^\d+[a-z]?$/i.test(trimmed)) return false;
+        // Exclude symbols/noise
+        if (/^[^a-zA-Z0-9]+$/.test(trimmed) || trimmed.startsWith("_")) return false;
+        return true;
+      })
+      .slice(0, 14);
   }, [result]);
 
   // Decision scores list sorted descending
@@ -68,7 +81,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
             {result.error || "This document appears to be blank or contains no readable text. Please upload a document with readable content."}
           </p>
           <p className="validationErrorCard__details">
-            File: <strong>{result.filename || "Uploaded document"}</strong> — No readable text was detected. Blank documents are rejected before inference and are not sorted into any folder.
+            Document Name: <strong>{originalFileName}</strong> — No readable text was detected. Blank documents are rejected before inference and are not sorted into any folder.
           </p>
           <div className="resultDashboard__actions" style={{ marginTop: "24px" }}>
             <button className="button button--primary" type="button" onClick={onUploadAnother}>
@@ -90,10 +103,10 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
         <div className="docResultHeader__main">
           <div className="docResultHeader__fileInfo">
             <span className="docResultHeader__icon" aria-hidden="true">📄</span>
-            <div>
-              <span className="docResultHeader__fileLabel">Analyzed Document</span>
+            <div style={{ minWidth: 0 }}>
+              <span className="docResultHeader__fileLabel">DOCUMENT NAME</span>
               <h2 className="docResultHeader__fileName" title={result.filename}>
-                {fileNameOnly(result.filename)}
+                {originalFileName}
               </h2>
             </div>
           </div>
@@ -154,12 +167,12 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
 
             <div className="resultHeroMetaGrid">
               <div className="resultHeroMeta">
-                <span>Model</span>
-                <strong>TF-IDF + Structural Features + LinearSVC</strong>
+                <span>DOCUMENT NAME</span>
+                <strong title={result.filename} style={{ wordBreak: "break-word" }}>{originalFileName}</strong>
               </div>
               <div className="resultHeroMeta">
-                <span>File Name</span>
-                <strong title={result.filename}>{fileNameOnly(result.filename)}</strong>
+                <span>Model</span>
+                <strong>TF-IDF + Structural Features + LinearSVC</strong>
               </div>
               <div className="resultHeroMeta">
                 <span>Decision Margin</span>
@@ -192,12 +205,12 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
 
               <div className="resultHeroMetaGrid">
                 <div className="resultHeroMeta">
-                  <span>Model</span>
-                  <strong>TF-IDF + Structural Features + LinearSVC</strong>
+                  <span>DOCUMENT NAME</span>
+                  <strong title={result.filename} style={{ wordBreak: "break-word" }}>{originalFileName}</strong>
                 </div>
                 <div className="resultHeroMeta">
-                  <span>File Name</span>
-                  <strong title={result.filename}>{fileNameOnly(result.filename)}</strong>
+                  <span>Model</span>
+                  <strong>TF-IDF + Structural Features + LinearSVC</strong>
                 </div>
                 <div className="resultHeroMeta">
                   <span>Decision Margin</span>
@@ -225,7 +238,11 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
                   isAnonymous ? "confidencePanel__label--misc" : "confidencePanel__label--confident"
                 }`}
               >
-                {isAnonymous ? "Anonymous (margin < 0.25)" : "High confidence"}
+                {isAnonymous
+                  ? "Anonymous (Margin < 0.25)"
+                  : decisionMargin != null && decisionMargin >= 1.0
+                  ? "High Separation"
+                  : "Moderate Separation"}
               </span>
             </div>
           </div>
@@ -244,12 +261,12 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
 
           <div className="marginScaleLegend">
             <span>0.0 (Boundary)</span>
-            <span style={{ color: "#64748b" }}>0.25 (Anonymous Threshold)</span>
+            <span style={{ color: "#64748b", fontWeight: "700" }}>0.25 (Anonymous Threshold)</span>
             <span>1.0+ (High Separation)</span>
           </div>
         </section>
 
-        {/* 6. MODEL DECISION SCORES ACROSS ALL 6 DOMAINS */}
+        {/* 4. MODEL DECISION SCORES ACROSS ALL 6 DOMAINS */}
         <section className="decisionScoresPanel cardRise">
           <div
             className="decisionScoresPanel__header"
@@ -317,7 +334,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
           )}
         </section>
 
-        {/* 7. SORTING RESULT / LOCAL STORAGE */}
+        {/* 5. SORTING RESULT / LOCAL STORAGE */}
         {result.storedIn && (
           <section className="storagePanel cardRise">
             <span className="eyebrow">Local storage</span>
@@ -329,7 +346,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
           </section>
         )}
 
-        {/* 8. XAI / LINEAR FEATURE ATTRIBUTION */}
+        {/* 6. XAI / LINEAR FEATURE ATTRIBUTION */}
         <section className="keywordPanel cardRise">
           <div className="keywordPanel__head">
             <span className="eyebrow">Linear Feature Attribution</span>
@@ -339,7 +356,7 @@ function ResultDashboard({ result, theme, onUploadAnother, onBackHome }) {
             </p>
           </div>
           <div className="keywordChipRow">
-            {keywords.map((word, idx) => (
+            {cleanKeywords.map((word, idx) => (
               <span key={`${word}-${idx}`} className="keywordChip">
                 {word}
               </span>

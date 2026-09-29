@@ -193,6 +193,26 @@ def validate_document_content(raw_text: str | None) -> tuple[bool, str]:
     return True, cleaned
 
 
+def get_unique_destination_path(dest_dir: str, original_filename: str) -> str:
+    """
+    Preserves the exact original filename. If a file already exists at the destination,
+    appends (1), (2), etc. without timestamps or random prefixes.
+    """
+    clean_filename = os.path.basename(original_filename.strip()) or "document"
+    candidate_path = os.path.join(dest_dir, clean_filename)
+    if not os.path.exists(candidate_path):
+        return candidate_path
+
+    stem, ext = os.path.splitext(clean_filename)
+    counter = 1
+    while True:
+        candidate_name = f"{stem} ({counter}){ext}"
+        candidate_path = os.path.join(dest_dir, candidate_name)
+        if not os.path.exists(candidate_path):
+            return candidate_path
+        counter += 1
+
+
 # ---------------------------------------------------
 # SHARED INFERENCE & AUTOMATIC SORTING PIPELINE
 # ---------------------------------------------------
@@ -207,9 +227,8 @@ async def process_uploaded_file(file: UploadFile) -> dict:
             detail="Unsupported file type. Please upload a PDF, DOCX, or TXT file."
         )
 
-    timestamp = int(time.time() * 1000)
-    temp_filename = f"{timestamp}_{client_name}"
-    temp_path = os.path.join(STAGING_DIR, temp_filename)
+    temp_id = uuid.uuid4().hex
+    temp_path = os.path.join(STAGING_DIR, f"stage_{temp_id}_{client_name}")
 
     try:
         # 1. Save uploaded file to staging
@@ -245,14 +264,14 @@ async def process_uploaded_file(file: UploadFile) -> dict:
         top_features = pred_res["top_features"]
         text_length = pred_res["text_length"]
 
-        # 5. Automatic Folder Sorting
+        # 5. Automatic Folder Sorting with Clean Filename Preservation
         if is_anonymous or final_destination == ANONYMOUS_CATEGORY:
             dest_dir = ANONYMOUS_DIR
         else:
             dest_dir = os.path.join(BASE_DIR, final_destination)
 
         os.makedirs(dest_dir, exist_ok=True)
-        dest_path = os.path.join(dest_dir, temp_filename)
+        dest_path = get_unique_destination_path(dest_dir, client_name)
         shutil.move(temp_path, dest_path)
 
         print(

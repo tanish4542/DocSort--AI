@@ -1,4 +1,5 @@
 import os
+import uuid
 import pytest
 from fastapi.testclient import TestClient
 import joblib
@@ -128,3 +129,34 @@ def test_anonymous_document_sorted_to_anonymous_folder():
         assert data["stored_in"].startswith(expected_dir)
         assert os.path.exists(data["stored_in"])
         assert "Anonymous" in data["stored_in"]
+
+# 11. Original filename preservation & duplicate collision handling
+def test_original_filename_preservation_and_duplicate_collision():
+    uid = uuid.uuid4().hex[:8]
+    content = b"Cloud microservices, Kubernetes clusters, and GPU database hardware acceleration."
+    test_filename = f"test_doc_{uid}.txt"
+    
+    # First upload -> should save as test_doc_{uid}.txt
+    res1 = client.post("/predict", files={"file": (test_filename, content, "text/plain")})
+    assert res1.status_code == 200
+    data1 = res1.json()
+    path1 = data1["stored_in"]
+    assert os.path.basename(path1) == test_filename
+    assert os.path.exists(path1)
+
+    # Second upload -> duplicate should save as test_doc_{uid} (1).txt
+    res2 = client.post("/predict", files={"file": (test_filename, content, "text/plain")})
+    assert res2.status_code == 200
+    data2 = res2.json()
+    path2 = data2["stored_in"]
+    assert os.path.basename(path2) == f"test_doc_{uid} (1).txt"
+    assert os.path.exists(path2)
+    assert path1 != path2
+
+    # Third upload -> duplicate should save as test_doc_{uid} (2).txt
+    res3 = client.post("/predict", files={"file": (test_filename, content, "text/plain")})
+    assert res3.status_code == 200
+    data3 = res3.json()
+    path3 = data3["stored_in"]
+    assert os.path.basename(path3) == f"test_doc_{uid} (2).txt"
+    assert os.path.exists(path3)
