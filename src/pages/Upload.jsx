@@ -134,7 +134,7 @@ function Upload() {
             <h2>Connected to FastAPI</h2>
             <p>
   The frontend sends a <strong>POST</strong> request to
-  <span className="mono">http://127.0.0.1:8001/predict-bulk</span>
+  <span className="mono">https://docsort-ai.onrender.com/predict-bulk</span>
   with the file key set to <span className="mono">files</span>.
 </p>
           </div>

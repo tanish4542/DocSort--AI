@@ -7,7 +7,7 @@ const floatingCards = [
 ];
 
 const metrics = [
-  { label: "Backend", value: "http://127.0.0.1:8001" },
+  { label: "Backend", value: "https://docsort-ai.onrender.com" },
   { label: "Prediction", value: "FastAPI / FormData" },
   { label: "Output", value: "Filename + folder path" },
 ];
