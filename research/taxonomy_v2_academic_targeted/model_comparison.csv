@@ -1,4 +1,0 @@
-model_name,eval_benchmark,accuracy,macro_precision,macro_recall,macro_f1,weighted_f1
-Multinomial Naive Bayes,Targeted Academic Test Set,89.7,90.32,89.72,89.69,89.61
-Logistic Regression,Targeted Academic Test Set,94.08,94.44,94.06,94.22,94.1
-LinearSVC,Targeted Academic Test Set,94.58,94.75,94.59,94.66,94.58

@@ -1,9 +1,0 @@
-filename,expected_class,v1_svc_prediction,v1_svc_margin,expanded_svc_prediction,expanded_svc_margin,expanded_mnb_pred,expanded_mnb_proba,expanded_lr_pred,expanded_lr_proba,text_length
-01_Technology_Computing.pdf,Technology & Computing,Technology & Computing,1.3408,Technology & Computing,0.7043,Technology & Computing,0.9548,Technology & Computing,0.692,559
-02_Medical_Health.pdf,Medical Health,Medical Health,2.3014,Medical Health,2.7861,Medical Health,0.9994,Medical Health,0.98,487
-03_Business_Finance.pdf,Business and Finance,Business and Finance,2.619,Business and Finance,2.9709,Business and Finance,0.9998,Business and Finance,0.98,485
-04_Entertainment.pdf,Entertainment,Entertainment,3.574,Entertainment,3.633,Entertainment,0.9995,Entertainment,0.9808,487
-05_Sports.pdf,Sports,Sports,2.7507,Sports,3.3662,Sports,0.9992,Sports,0.9864,472
-06_Science.pdf,Science,Science,1.8289,Science,1.8635,Science,0.9595,Science,0.8665,490
-MANVI_BIODATA.pdf,OUT_OF_DOMAIN,Science,0.1792,Science,0.0262,Medical Health,0.5147,Medical Health,0.3127,1575
-ood_miscellaneous_doc.pdf,OUT_OF_DOMAIN,Technology & Computing,0.0856,Technology & Computing,0.1363,Technology & Computing,0.4345,Technology & Computing,0.3136,179
